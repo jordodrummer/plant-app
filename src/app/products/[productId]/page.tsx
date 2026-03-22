@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getItemById } from "@/lib/db/items";
 import { getCategoryById } from "@/lib/db/categories";
+import AddToCartButton from "@/components/add-to-cart-button";
 import type { Metadata } from "next";
 
 type Props = {
@@ -45,6 +46,12 @@ export default async function ProductPage({ params }: Props) {
             {plant.in_stock ? `In stock (${plant.inventory})` : "Out of stock"}
           </span>
         </div>
+        <AddToCartButton
+          plant_id={plant.id}
+          cultivar_name={plant.cultivar_name}
+          price={plant.price}
+          in_stock={plant.in_stock}
+        />
       </CardContent>
     </Card>
   );

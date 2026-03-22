@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CartIcon from "@/components/cart-icon";
 
 export default function Nav() {
   return (
@@ -10,6 +11,9 @@ export default function Nav() {
         <Link href="/products" className="text-sm text-muted-foreground hover:text-foreground">
           Products
         </Link>
+        <div className="ml-auto">
+          <CartIcon />
+        </div>
       </div>
     </nav>
   );

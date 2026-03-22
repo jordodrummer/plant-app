@@ -2,39 +2,27 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Structure
-
-Two independent projects sharing a git root (no workspace orchestration):
-
-- **`plantInventory/`** — React frontend (Vite + MUI)
-- **`plantInventoryServer/`** — Express backend (PostgreSQL via raw `pg` queries)
-
 ## Development Commands
 
-### Frontend (`plantInventory/`)
 ```bash
-npm run dev       # Start Vite dev server
+npm run dev       # Start Next.js dev server (http://localhost:3000)
 npm run build     # Production build
-npm run lint      # ESLint (zero warnings enforced)
-npm run preview   # Preview production build
+npm run lint      # ESLint
+npm run seed      # Seed the PostgreSQL database
 ```
-
-### Backend (`plantInventoryServer/`)
-```bash
-npm run dev       # Start with nodemon (auto-reload)
-npm run seed:dev  # Seed the PostgreSQL database
-```
-
-Both projects require separate `npm install`. There is no root package.json.
 
 ## Architecture
 
-**Frontend:** React 18 with React Router v6 for routing and MUI 5 for components. State is managed with React hooks (useState/useEffect). Currently fetches from fakestoreapi.com as a mock data source — not yet connected to the backend.
+Next.js 15 App Router with TypeScript. Single project at repo root.
 
-**Backend:** Express server with CORS and Morgan logging. PostgreSQL database named `cactus_shop` connected via `client.js`. Database functions use raw SQL (no ORM). Schema has tables: `categories`, `plants`, `customers`, `orders`, `order_details`.
+**Frontend:** Server components fetch data directly from PostgreSQL — no client-side fetch pattern. UI built with shadcn/ui + Tailwind CSS. Interactive elements use `"use client"` components.
 
-**Routes** are mounted under `/api/orders` and `/api/orderItems`. Most DB functions and route handlers are stubs awaiting implementation.
+**Data layer:** Raw SQL via `pg` Pool (`src/lib/db/client.ts`). Query functions in `src/lib/db/*.ts` return typed results. Types defined in `src/lib/types.ts`.
 
-## Database
+**API routes:** `src/app/api/orders/route.ts` and `src/app/api/order-items/route.ts` handle mutations. Categories and plants are queried directly in server components.
 
-Connection configured in `plantInventoryServer/client.js` with env vars: `DB_URL`, `DB_NAME` (default: `cactus_shop`), `DB_HOST`, `DB_USER`, `DB_PORT`. Uses dotenv for local config.
+**Database:** PostgreSQL database `cactus_shop`. Tables: `categories`, `plants`, `customers`, `orders`, `order_details`. Connection via `DATABASE_URL` env var with fallback to individual `DB_*` vars.
+
+## Legacy Reference
+
+`plantInventory/` (old React+Vite frontend) and `plantInventoryServer/` (old Express backend) are kept for reference. Do not modify or delete them.

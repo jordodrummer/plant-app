@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/jordanumlauf/plant-app -not -path */node_modules/* -type f)",
+      "Bash(grep -E '\\\\.\\(jsx?|css|json|cjs|md|html\\)$')",
+      "Bash(npx:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout 15 npm run dev)"
+    ]
+  }
+}

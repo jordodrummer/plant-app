@@ -3,7 +3,7 @@ import pg from "pg";
 const client = new pg.Client({
   connectionString:
     process.env.DATABASE_URL ||
-    "postgresql://jordo_drummer@localhost:5432/cactus_shop",
+    "postgresql://jordanumlauf@localhost:5432/cactus_shop",
 });
 
 async function dropTables() {

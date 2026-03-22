@@ -8,7 +8,7 @@ export default function Home() {
       <p className="text-muted-foreground text-lg">
         Browse our plant inventory
       </p>
-      <Button render={<Link href="/products" />}>
+      <Button nativeButton={false} render={<Link href="/products" />}>
         View Products
       </Button>
     </div>

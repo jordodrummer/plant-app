@@ -8,7 +8,7 @@ export default function ProductNotFound() {
       <p className="text-muted-foreground">
         The product you are looking for does not exist.
       </p>
-      <Button variant="outline" render={<Link href="/products" />}>
+      <Button nativeButton={false} variant="outline" render={<Link href="/products" />}>
         Back to Products
       </Button>
     </div>

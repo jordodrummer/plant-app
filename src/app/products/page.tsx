@@ -21,7 +21,7 @@ export default async function ProductsPage() {
               <p className="text-muted-foreground mb-4">{plant.details}</p>
               <div className="flex items-center justify-between">
                 <span className="font-semibold">${plant.price}</span>
-                <Button render={<Link href={`/products/${plant.id}`} />} variant="outline" size="sm">
+                <Button nativeButton={false} render={<Link href={`/products/${plant.id}`} />} variant="outline" size="sm">
                   Details
                 </Button>
               </div>

@@ -43,7 +43,7 @@ plant-app/
 └── .env.local                      # Local DB connection (gitignored)
 ```
 
-Old directories `plantInventory/` and `plantInventoryServer/` are removed after migration.
+Old directories `plantInventory/` and `plantInventoryServer/` are kept in place for reference. Do not modify or delete them.
 
 ## Types
 
@@ -144,3 +144,5 @@ DATABASE_URL=postgresql://jordo_drummer@localhost:5432/cactus_shop
 - MUI and Emotion packages
 - React Router (replaced by file-based routing)
 - fakestoreapi.com dependency (replaced by real DB queries)
+
+Note: The old `plantInventory/` and `plantInventoryServer/` directories remain untouched for reference.

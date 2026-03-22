@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,16 @@ export default async function ProductsPage() {
             <CardHeader>
               <CardTitle>{plant.cultivar_name}</CardTitle>
             </CardHeader>
+            {plant.image && (
+              <div className="relative aspect-video w-full overflow-hidden">
+                <Image
+                  src={plant.image}
+                  alt={plant.cultivar_name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            )}
             <CardContent>
               <p className="text-muted-foreground mb-4">{plant.details}</p>
               <div className="flex items-center justify-between">

@@ -40,3 +40,10 @@ export type OrderDetail = {
   price_each: number;
   quantity: number;
 };
+
+export type CartItem = {
+  plant_id: number;
+  cultivar_name: string;
+  price: number;
+  quantity: number;
+};

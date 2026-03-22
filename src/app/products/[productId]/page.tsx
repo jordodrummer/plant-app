@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getItemById } from "@/lib/db/items";
 import { getCategoryById } from "@/lib/db/categories";
 import AddToCartButton from "@/components/add-to-cart-button";
+import ImageUpload from "@/components/image-upload";
 import type { Metadata } from "next";
 
 type Props = {
@@ -33,6 +35,16 @@ export default async function ProductPage({ params }: Props) {
       <CardHeader>
         <CardTitle className="text-3xl">{plant.cultivar_name}</CardTitle>
       </CardHeader>
+      {plant.image && (
+        <div className="relative aspect-video w-full overflow-hidden">
+          <Image
+            src={plant.image}
+            alt={plant.cultivar_name}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
       <CardContent className="space-y-4">
         {category && (
           <p className="text-sm text-muted-foreground">
@@ -52,6 +64,7 @@ export default async function ProductPage({ params }: Props) {
           price={plant.price}
           in_stock={plant.in_stock}
         />
+        <ImageUpload plantId={plant.id} />
       </CardContent>
     </Card>
   );

@@ -46,7 +46,7 @@ type CartItem = {
 - Badge hidden when cart is empty
 
 ### Nav Update
-- `src/components/nav.tsx` becomes a client component (needs cart context)
+- `src/components/nav.tsx` stays a server component — renders the `CartIcon` client component as a child
 - Adds `CartIcon` next to the existing links
 
 ### Product Detail Page Update
@@ -76,7 +76,7 @@ type CartItem = {
 - `src/lib/types.ts` — add CartItem type
 - `src/app/layout.tsx` — wrap children with CartProvider
 - `src/app/products/[productId]/page.tsx` — add AddToCartButton
-- `src/components/nav.tsx` — add CartIcon, convert to client component
+- `src/components/nav.tsx` — add CartIcon (nav stays server component)
 
 ## Dependencies
 No new packages needed. Uses existing shadcn/ui components (Button, Card). localStorage is a browser API.

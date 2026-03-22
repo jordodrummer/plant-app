@@ -20,8 +20,14 @@ export async function createItem(item: Omit<Plant, "id">): Promise<Plant> {
   return rows[0];
 }
 
+const ALLOWED_COLUMNS = new Set([
+  "cultivar_name", "category_id", "image", "inventory", "price", "details", "in_stock",
+]);
+
 export async function updateItem(id: number, fields: Partial<Omit<Plant, "id">>): Promise<Plant | null> {
-  const entries = Object.entries(fields).filter(([, v]) => v !== undefined);
+  const entries = Object.entries(fields).filter(
+    ([k, v]) => v !== undefined && ALLOWED_COLUMNS.has(k)
+  );
   if (entries.length === 0) return getItemById(id);
 
   const setClauses = entries.map(([key], i) => `${key} = $${i + 1}`).join(", ");

@@ -176,7 +176,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 | `DATABASE_URL` | Yes (or use fallbacks) | | PostgreSQL connection string |
 | `DB_HOST` | No | `localhost` | Database host (fallback) |
 | `DB_NAME` | No | `cactus_shop` | Database name (fallback) |
-| `DB_USER` | No | `jordanumlauf` | Database user (fallback) |
+| `DB_USER` | No | `your_pg_username` | Database user (fallback) |
 | `DB_PASS` | No | `""` | Database password (fallback) |
 | `DB_PORT` | No | `5432` | Database port (fallback) |
 | `BLOB_READ_WRITE_TOKEN` | For image uploads | | Vercel Blob storage token (required in production) |

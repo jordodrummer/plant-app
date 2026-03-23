@@ -89,11 +89,11 @@ async function seedData() {
 
   await client.query(`
     INSERT INTO plants (cultivar_name, category_id, image, inventory, price, details, in_stock) VALUES
-      ('San Pedro', 1, '', 10, 5, 'Classic columnar cactus', true),
-      ('Bridgesii', 1, '', 8, 7, 'Bolivian torch cactus', true),
-      ('Peruvianus', 2, '', 5, 15, 'Peruvian apple cactus', true),
-      ('Pachanoi', 2, '', 0, 20, 'Traditional medicinal cactus', false),
-      ('Scopulicola', 3, '', 3, 25, 'Rare cliff-dwelling cactus', true);
+      ('Echeveria Lola', 1, '', 10, 5, 'Rosette-forming succulent with pale purple leaves', true),
+      ('Burro''s Tail', 1, '', 8, 7, 'Trailing succulent with plump blue-green leaves', true),
+      ('Prickly Pear', 2, '', 5, 15, 'Paddle-shaped cactus with colorful fruit', true),
+      ('Aloe Vera', 2, '', 0, 20, 'Popular succulent known for its soothing gel', false),
+      ('Golden Barrel', 3, '', 3, 25, 'Round cactus with golden spines', true);
   `);
 
   await client.query(`

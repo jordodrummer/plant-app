@@ -48,7 +48,7 @@ Visit the site and you'll see a grid of available plants. Each card shows the pl
 - Visit the **Cart** page from the navigation bar to view your items
 - Adjust quantities or remove items directly in the cart
 - Your cart total updates automatically
-- Your cart is saved in your browser — it persists even if you close the tab and come back
+- Your cart is saved in your browser. It persists even if you close the tab and come back
 
 ### Coming Soon
 
@@ -68,7 +68,7 @@ The database comes pre-loaded with sample plant data. To reset and re-seed:
 npm run seed
 ```
 
-> **Warning:** This is a destructive operation — it drops all tables and recreates them with sample data.
+> **Warning:** This is a destructive operation. It drops all tables and recreates them with sample data.
 
 **Plant data model:**
 
@@ -173,13 +173,13 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `DATABASE_URL` | Yes (or use fallbacks) | — | PostgreSQL connection string |
+| `DATABASE_URL` | Yes (or use fallbacks) | | PostgreSQL connection string |
 | `DB_HOST` | No | `localhost` | Database host (fallback) |
 | `DB_NAME` | No | `cactus_shop` | Database name (fallback) |
 | `DB_USER` | No | `jordanumlauf` | Database user (fallback) |
 | `DB_PASS` | No | `""` | Database password (fallback) |
 | `DB_PORT` | No | `5432` | Database port (fallback) |
-| `BLOB_READ_WRITE_TOKEN` | For image uploads | — | Vercel Blob storage token (required in production) |
+| `BLOB_READ_WRITE_TOKEN` | For image uploads | | Vercel Blob storage token (required in production) |
 
 ### Project Structure
 
@@ -236,13 +236,13 @@ src/
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/orders` | `GET` | List all orders, or single order with `?id=` |
-| `/api/orders` | `POST` | Create order — body: `{ customer_id }` |
-| `/api/orders` | `PUT` | Update order status — body: `{ id, status }` |
+| `/api/orders` | `POST` | Create order. Body: `{ customer_id }` |
+| `/api/orders` | `PUT` | Update order status. Body: `{ id, status }` |
 | `/api/orders` | `DELETE` | Soft-delete order with `?id=` |
 | `/api/order-items` | `GET` | List items for an order with `?order_id=` |
-| `/api/order-items` | `POST` | Add item — body: `{ order_id, plant_id, price_each, quantity }` |
+| `/api/order-items` | `POST` | Add item. Body: `{ order_id, plant_id, price_each, quantity }` |
 | `/api/order-items` | `DELETE` | Remove item with `?id=` |
-| `/api/upload` | `POST` | Upload image — FormData with `file` and `plant_id` fields |
+| `/api/upload` | `POST` | Upload image. FormData with `file` and `plant_id` fields |
 
 ### Deployment
 
@@ -251,8 +251,8 @@ src/
 1. Push your repo to GitHub
 2. Import the project in Vercel
 3. Set environment variables:
-   - `DATABASE_URL` — use [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) for production (provides auto-backups, SSL, and connection pooling)
-   - `BLOB_READ_WRITE_TOKEN` — generated in Vercel Blob storage settings
+   - `DATABASE_URL` - use [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) for production (provides auto-backups, SSL, and connection pooling)
+   - `BLOB_READ_WRITE_TOKEN` - generated in Vercel Blob storage settings
 
 The app will build and deploy automatically on every push.
 

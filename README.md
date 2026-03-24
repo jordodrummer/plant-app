@@ -299,10 +299,6 @@ src/
 
 The app will build and deploy automatically on every push.
 
-### Legacy Reference
-
-The `plantInventory/` and `plantInventoryServer/` directories contain the original React + Vite frontend and Express backend from before the Next.js migration. They are kept for reference and should not be modified.
-
 ---
 
 ## License

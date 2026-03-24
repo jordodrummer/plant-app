@@ -91,8 +91,10 @@ Each product page represents one cultivar, hybrid, or seed lot. Products can hav
 | Type | Description |
 |------|-------------|
 | **Cutting** | A pre-cut piece from a mother stand, ready to ship |
-| **Cut to Order** | Cut from the mother stand after payment is received |
+| **Rooted Cutting** | A pre-cut piece from a mother stand, which already has roots, ready to ship |
+| **Cut to Order** | Cut from the mother stand after payment is received. Allow 7-10 days for cut-to-order listings to callous before shipment |
 | **Mother Stand** | The whole rooted plant that cuttings are taken from |
+| **Seedling** | The whole rooted plant that grew from a seed |
 | **OP Seeds** | Open pollinated seeds (mother cultivar OP), sold in packs |
 | **Hybrid Seeds** | Cross-pollinated seeds (mother x father), sold in packs |
 
@@ -100,9 +102,11 @@ Each product page represents one cultivar, hybrid, or seed lot. Products can hav
 
 Use the variant note field to set expectations for customers. Here are suggested wordings:
 
-- **Pre-cut (inventory listing):** "The cut you see here is the cut you get, unless noted as an inventory listing."
-- **Inventory listing (multiple in stock):** "Tips to be cut upon purchase. Inventory listing, so you will likely not receive the exact cut shown here."
-- **Cut to order:** "Allow 7-10 days for cut-to-order listings to callous before shipment."
+- **Cut to order:** "The cut you get will be taken from the same part of the plant as pictured."
+- **Cut to Order, Inventory listing (multiple in stock):** "Tips to be cut upon purchase. Inventory listing, so you will likely not receive the exact cut shown here."
+- **Pre-cut:** "The cut you get will be the same piece as pictured."
+- **Pre-cut, Inventory listing (multiple in stock):** "Inventory listing, so you will likely not receive the exact cut shown here."
+
 
 **Provenance:**
 

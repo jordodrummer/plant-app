@@ -202,7 +202,7 @@ async function createTables() {
     CREATE TABLE plant_variants (
       id SERIAL PRIMARY KEY,
       plant_id INTEGER NOT NULL REFERENCES plants(id) ON DELETE CASCADE,
-      variant_type VARCHAR(20) NOT NULL CHECK (variant_type IN ('cutting', 'cut_to_order', 'mother_stand', 'op_seeds', 'hybrid_seeds')),
+      variant_type VARCHAR(20) NOT NULL CHECK (variant_type IN ('cutting', 'rooted_cutting', 'cut_to_order', 'mother_stand', 'seedling', 'op_seeds', 'hybrid_seeds')),
       price INTEGER NOT NULL,
       inventory INTEGER DEFAULT 0,
       label VARCHAR(100),
@@ -883,8 +883,10 @@ import type { PlantVariant, VariantType } from "@/lib/types";
 
 const VARIANT_TYPE_LABELS: Record<VariantType, string> = {
   cutting: "Cutting",
+  rooted_cutting: "Rooted Cutting",
   cut_to_order: "Cut to Order",
   mother_stand: "Mother Stand",
+  seedling: "Seedling",
   op_seeds: "OP Seeds",
   hybrid_seeds: "Hybrid Seeds",
 };

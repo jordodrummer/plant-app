@@ -36,7 +36,7 @@ One row per purchasable option on a product page.
 CREATE TABLE plant_variants (
   id SERIAL PRIMARY KEY,
   plant_id INTEGER NOT NULL REFERENCES plants(id) ON DELETE CASCADE,
-  variant_type VARCHAR(20) NOT NULL CHECK (variant_type IN ('cutting', 'cut_to_order', 'mother_stand', 'op_seeds', 'hybrid_seeds')),
+  variant_type VARCHAR(20) NOT NULL CHECK (variant_type IN ('cutting', 'rooted_cutting', 'cut_to_order', 'mother_stand', 'seedling', 'op_seeds', 'hybrid_seeds')),
   price INTEGER NOT NULL,
   inventory INTEGER DEFAULT 0,
   label VARCHAR(100),
@@ -145,7 +145,7 @@ Plant: "Golden Barrel"
 ## TypeScript Types
 
 ```typescript
-export type VariantType = 'cutting' | 'cut_to_order' | 'mother_stand' | 'op_seeds' | 'hybrid_seeds';
+export type VariantType = 'cutting' | 'rooted_cutting' | 'cut_to_order' | 'mother_stand' | 'seedling' | 'op_seeds' | 'hybrid_seeds';
 export type ImageType = 'plant' | 'mother' | 'father' | 'cutting' | 'grown_example';
 
 export type Plant = {

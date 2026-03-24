@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getItemById } from "@/lib/db/items";
 import { getCategoryById } from "@/lib/db/categories";
 import AddToCartButton from "@/components/add-to-cart-button";
@@ -31,12 +30,9 @@ export default async function ProductPage({ params }: Props) {
   const category = await getCategoryById(plant.category_id);
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-3xl">{plant.cultivar_name}</CardTitle>
-      </CardHeader>
+    <div className="mx-auto max-w-3xl">
       {plant.image && (
-        <div className="relative aspect-video w-full overflow-hidden">
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
           <Image
             src={plant.image}
             alt={plant.cultivar_name}
@@ -45,27 +41,32 @@ export default async function ProductPage({ params }: Props) {
           />
         </div>
       )}
-      <CardContent className="space-y-4">
-        {category && (
-          <p className="text-sm text-muted-foreground">
-            Category: {category.name}
-          </p>
-        )}
-        <p>{plant.details}</p>
-        <div className="flex gap-4">
-          <span className="font-semibold text-lg">${plant.price}</span>
-          <span className={plant.in_stock ? "text-green-600" : "text-red-500"}>
-            {plant.in_stock ? `In stock (${plant.inventory})` : "Out of stock"}
-          </span>
+      <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold">{plant.cultivar_name}</h1>
+          {category && (
+            <p className="text-sm text-muted-foreground">
+              Category: {category.name}
+            </p>
+          )}
+          <p className="text-muted-foreground">{plant.details}</p>
+          <div className="flex items-center gap-3 pt-2">
+            <span className="text-2xl font-bold">${plant.price}</span>
+            <span className={plant.in_stock ? "text-green-600" : "text-red-500"}>
+              {plant.in_stock ? `In stock (${plant.inventory})` : "Out of stock"}
+            </span>
+          </div>
         </div>
-        <AddToCartButton
-          plant_id={plant.id}
-          cultivar_name={plant.cultivar_name}
-          price={plant.price}
-          in_stock={plant.in_stock}
-        />
-        <ImageUpload plantId={plant.id} />
-      </CardContent>
-    </Card>
+        <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+          <AddToCartButton
+            plant_id={plant.id}
+            cultivar_name={plant.cultivar_name}
+            price={plant.price}
+            in_stock={plant.in_stock}
+          />
+          <ImageUpload plantId={plant.id} />
+        </div>
+      </div>
+    </div>
   );
 }

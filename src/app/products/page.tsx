@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getItems } from "@/lib/db/items";
+import PlantPlaceholder from "@/components/plant-placeholder";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ export default async function ProductsPage() {
             <CardHeader>
               <CardTitle>{plant.cultivar_name}</CardTitle>
             </CardHeader>
-            {plant.image && (
+            {plant.image ? (
               <div className="relative aspect-video w-full overflow-hidden">
                 <Image
                   src={plant.image}
@@ -27,6 +28,8 @@ export default async function ProductsPage() {
                   className="object-cover"
                 />
               </div>
+            ) : (
+              <PlantPlaceholder />
             )}
             <CardContent>
               <p className="text-muted-foreground mb-4">{plant.details}</p>

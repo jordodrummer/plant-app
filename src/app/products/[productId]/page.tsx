@@ -4,6 +4,7 @@ import { getItemById } from "@/lib/db/items";
 import { getCategoryById } from "@/lib/db/categories";
 import AddToCartButton from "@/components/add-to-cart-button";
 import ImageUpload from "@/components/image-upload";
+import PlantPlaceholder from "@/components/plant-placeholder";
 import type { Metadata } from "next";
 
 type Props = {
@@ -31,7 +32,7 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl">
-      {plant.image && (
+      {plant.image ? (
         <div className="relative aspect-video w-full overflow-hidden rounded-lg">
           <Image
             src={plant.image}
@@ -39,6 +40,10 @@ export default async function ProductPage({ params }: Props) {
             fill
             className="object-cover"
           />
+        </div>
+      ) : (
+        <div className="overflow-hidden rounded-lg">
+          <PlantPlaceholder />
         </div>
       )}
       <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:justify-between">

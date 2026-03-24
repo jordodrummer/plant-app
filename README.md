@@ -203,6 +203,7 @@ src/
 ├── components/
 │   ├── ui/                     # shadcn/ui components (Button, Card)
 │   ├── nav.tsx                 # Navigation bar
+│   ├── footer.tsx              # Footer
 │   ├── cart-icon.tsx           # Cart badge in nav
 │   ├── add-to-cart-button.tsx  # Add to Cart button
 │   └── image-upload.tsx        # Image upload component

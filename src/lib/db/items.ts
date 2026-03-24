@@ -6,6 +6,14 @@ export async function getItems(): Promise<Plant[]> {
   return rows;
 }
 
+export async function getFeaturedItems(limit: number = 3): Promise<Plant[]> {
+  const { rows } = await pool.query(
+    "SELECT * FROM plants WHERE in_stock = true LIMIT $1",
+    [limit]
+  );
+  return rows;
+}
+
 export async function getItemById(id: number): Promise<Plant | null> {
   const { rows } = await pool.query("SELECT * FROM plants WHERE id = $1", [id]);
   return rows[0] || null;

@@ -8,7 +8,7 @@ export type Plant = {
   id: number;
   cultivar_name: string;
   category_id: number;
-  image: string;
+  image: string | null;
   inventory: number;
   price: number;
   details: string | null;

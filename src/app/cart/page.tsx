@@ -5,6 +5,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
 
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
+}
+
 export default function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCart();
 
@@ -31,36 +35,38 @@ export default function CartPage() {
 
       <div className="space-y-4">
         {items.map((item) => (
-          <Card key={item.plant_id}>
+          <Card key={item.variant_id}>
             <CardContent className="flex items-center justify-between py-4">
               <div>
                 <p className="font-semibold">{item.cultivar_name}</p>
-                <p className="text-sm text-muted-foreground">${item.price.toFixed(2)} each</p>
+                <p className="text-sm text-muted-foreground">
+                  {item.variant_label} - {formatPrice(item.price)} each
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
                   size="icon-sm"
-                  onClick={() => updateQuantity(item.plant_id, item.quantity - 1)}
+                  onClick={() => updateQuantity(item.variant_id, item.quantity - 1)}
                 >
-                  −
+                  -
                 </Button>
                 <span className="w-8 text-center">{item.quantity}</span>
                 <Button
                   variant="outline"
                   size="icon-sm"
-                  onClick={() => updateQuantity(item.plant_id, item.quantity + 1)}
+                  onClick={() => updateQuantity(item.variant_id, item.quantity + 1)}
                   disabled={item.quantity >= item.max_quantity}
                 >
                   +
                 </Button>
                 <span className="w-16 text-right font-semibold">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  {formatPrice(item.price * item.quantity)}
                 </span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => removeItem(item.plant_id)}
+                  onClick={() => removeItem(item.variant_id)}
                 >
                   Remove
                 </Button>
@@ -71,7 +77,7 @@ export default function CartPage() {
       </div>
 
       <div className="mt-6 flex items-center justify-between border-t pt-4">
-        <span className="text-lg font-bold">Total: ${totalPrice.toFixed(2)}</span>
+        <span className="text-lg font-bold">Total: {formatPrice(totalPrice)}</span>
         <Button nativeButton={false} render={<Link href="/products" />} variant="outline">
           Continue Shopping
         </Button>

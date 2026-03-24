@@ -70,6 +70,7 @@ export default async function ProductPage({ params }: Props) {
             cultivar_name={plant.cultivar_name}
             price={plant.price}
             in_stock={plant.in_stock}
+            inventory={plant.inventory}
           />
           <ImageUpload plantId={plant.id} />
         </div>

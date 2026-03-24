@@ -24,7 +24,7 @@
 | `src/components/add-to-cart-button.tsx` | Create | Add to Cart button for product pages |
 | `src/app/products/[productId]/page.tsx` | Modify | Add AddToCartButton component |
 | `src/components/cart-icon.tsx` | Create | Nav cart icon with item count badge |
-| `src/components/nav.tsx` | Modify | Add CartIcon, convert to client component |
+| `src/components/nav.tsx` | Modify | Add CartIcon (stays server component) |
 | `src/app/cart/page.tsx` | Create | Cart page with items, quantities, totals |
 
 ---

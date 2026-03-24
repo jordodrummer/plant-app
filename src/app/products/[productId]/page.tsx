@@ -38,6 +38,7 @@ export default async function ProductPage({ params }: Props) {
             src={plant.image}
             alt={plant.cultivar_name}
             fill
+            priority
             className="object-cover"
           />
         </div>

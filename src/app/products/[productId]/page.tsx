@@ -58,7 +58,9 @@ export default async function ProductPage({ params }: Props) {
           )}
           <p className="text-muted-foreground">{plant.details}</p>
           <div className="flex items-center gap-3 pt-2">
-            <span className="text-2xl font-bold">${plant.price}</span>
+            <span className="text-2xl font-bold">
+              {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(plant.price)}
+            </span>
             <span className={plant.in_stock ? "text-green-600" : "text-red-500"}>
               {plant.in_stock ? `In stock (${plant.inventory})` : "Out of stock"}
             </span>

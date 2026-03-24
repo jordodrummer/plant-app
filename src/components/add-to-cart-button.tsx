@@ -22,9 +22,7 @@ export default function AddToCartButton({ plant_id, cultivar_name, price, in_sto
   const maxCanAdd = inventory - currentInCart;
 
   function handleClick() {
-    for (let i = 0; i < quantity; i++) {
-      addItem({ plant_id, cultivar_name, price, max_quantity: inventory });
-    }
+    addItem({ plant_id, cultivar_name, price, max_quantity: inventory, quantity });
     setAdded(true);
     setQuantity(1);
     setTimeout(() => setAdded(false), 1000);

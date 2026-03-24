@@ -5,7 +5,7 @@ import type { CartItem } from "./types";
 
 type CartContextType = {
   items: CartItem[];
-  addItem: (item: Omit<CartItem, "quantity">) => void;
+  addItem: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
   removeItem: (plantId: number) => void;
   updateQuantity: (plantId: number, quantity: number) => void;
   clearCart: () => void;
@@ -21,7 +21,11 @@ function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    if (!stored) return [];
+    const parsed = JSON.parse(stored) as CartItem[];
+    return parsed.filter(
+      (item) => item.plant_id && item.quantity > 0 && item.max_quantity > 0
+    );
   } catch {
     return [];
   }
@@ -42,18 +46,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     saveCart(items);
   }, [items]);
 
-  const addItem = useCallback((item: Omit<CartItem, "quantity">) => {
+  const addItem = useCallback((item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
+    const qty = item.quantity ?? 1;
     setItems((prev) => {
       const existing = prev.find((i) => i.plant_id === item.plant_id);
       if (existing) {
-        const newQty = Math.min(existing.quantity + 1, item.max_quantity);
+        const newQty = Math.min(existing.quantity + qty, item.max_quantity);
         return prev.map((i) =>
           i.plant_id === item.plant_id
             ? { ...i, quantity: newQty, max_quantity: item.max_quantity }
             : i
         );
       }
-      return [...prev, { ...item, quantity: 1 }];
+      return [...prev, { ...item, quantity: Math.min(qty, item.max_quantity) }];
     });
   }, []);
 

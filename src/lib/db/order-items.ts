@@ -1,5 +1,5 @@
 import pool from "./client";
-import { OrderDetail } from "../types";
+import type { OrderDetail } from "../types";
 
 export async function getOrderItems(orderId: number): Promise<OrderDetail[]> {
   const { rows } = await pool.query(
@@ -12,13 +12,14 @@ export async function getOrderItems(orderId: number): Promise<OrderDetail[]> {
 export async function createOrderItem(
   orderId: number,
   plantId: number,
+  variantId: number,
   priceEach: number,
   quantity: number
 ): Promise<OrderDetail> {
   const { rows } = await pool.query(
-    `INSERT INTO order_details (order_id, plant_id, price_each, quantity)
-     VALUES ($1, $2, $3, $4) RETURNING *`,
-    [orderId, plantId, priceEach, quantity]
+    `INSERT INTO order_details (order_id, plant_id, variant_id, price_each, quantity)
+     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [orderId, plantId, variantId, priceEach, quantity]
   );
   return rows[0];
 }

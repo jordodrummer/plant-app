@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { getItemById } from "@/lib/db/items";
 import { getCategoryById } from "@/lib/db/categories";
-import AddToCartButton from "@/components/add-to-cart-button";
+import { getVariantsByPlantId } from "@/lib/db/variants";
+import { getImagesByPlantId } from "@/lib/db/images";
+import ImageGallery from "@/components/image-gallery";
+import VariantSelector from "@/components/variant-selector";
 import ImageUpload from "@/components/image-upload";
-import PlantPlaceholder from "@/components/plant-placeholder";
 import type { Metadata } from "next";
 
 type Props = {
@@ -22,7 +23,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { productId } = await params;
-  const plant = await getItemById(Number(productId));
+  const id = Number(productId);
+  const [plant, variants, images] = await Promise.all([
+    getItemById(id),
+    getVariantsByPlantId(id),
+    getImagesByPlantId(id),
+  ]);
 
   if (!plant) {
     notFound();
@@ -32,50 +38,25 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl">
-      {plant.image ? (
-        <div className="relative aspect-[16/9] max-h-[400px] w-full overflow-hidden rounded-lg">
-          <Image
-            src={plant.image}
-            alt={plant.cultivar_name}
-            fill
-            priority
-            sizes="(min-width: 768px) 768px, 100vw"
-            className="object-cover"
-          />
-        </div>
-      ) : (
-        <div className="max-h-[400px] overflow-hidden rounded-lg">
-          <PlantPlaceholder />
-        </div>
-      )}
-      <div className="mt-6 flex flex-col gap-6 sm:flex-row sm:justify-between">
-        <div className="space-y-2">
+      <ImageGallery images={images} alt={plant.cultivar_name} />
+      <div className="mt-6 space-y-4">
+        <div>
           <h1 className="text-3xl font-bold">{plant.cultivar_name}</h1>
           {category && (
             <p className="text-sm text-muted-foreground">
               Category: {category.name}
             </p>
           )}
-          <p className="text-muted-foreground">{plant.details}</p>
-          <div className="flex items-center gap-3 pt-2">
-            <span className="text-2xl font-bold">
-              {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(plant.price)}
-            </span>
-            <span className={plant.in_stock ? "text-green-600" : "text-red-500"}>
-              {plant.in_stock ? `In stock (${plant.inventory})` : "Out of stock"}
-            </span>
-          </div>
+          {plant.details && (
+            <p className="mt-2 text-muted-foreground">{plant.details}</p>
+          )}
         </div>
-        <div className="flex shrink-0 flex-col gap-2 sm:items-end">
-          <AddToCartButton
-            plant_id={plant.id}
-            cultivar_name={plant.cultivar_name}
-            price={plant.price}
-            in_stock={plant.in_stock}
-            inventory={plant.inventory}
-          />
-          <ImageUpload plantId={plant.id} />
-        </div>
+        <VariantSelector
+          variants={variants}
+          plantId={plant.id}
+          cultivarName={plant.cultivar_name}
+        />
+        <ImageUpload plantId={plant.id} />
       </div>
     </div>
   );

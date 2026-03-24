@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
-import { updateItem } from "@/lib/db/items";
+import { createImage } from "@/lib/db/images";
+import type { ImageType } from "@/lib/types";
+
+const VALID_IMAGE_TYPES: ImageType[] = ["plant", "mother", "father", "cutting", "grown_example"];
 
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const plantId = formData.get("plant_id") as string | null;
+    const imageType = (formData.get("image_type") as string) || "plant";
+    const caption = (formData.get("caption") as string) || null;
 
     if (!file) {
       return NextResponse.json({ error: "file is required" }, { status: 400 });
@@ -25,13 +30,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid plant_id" }, { status: 400 });
     }
 
+    if (!VALID_IMAGE_TYPES.includes(imageType as ImageType)) {
+      return NextResponse.json({ error: "Invalid image_type" }, { status: 400 });
+    }
+
     const blob = await put(`plants/${id}/${file.name}`, file, {
       access: "public",
     });
 
-    await updateItem(id, { image: blob.url });
+    const image = await createImage({
+      plant_id: id,
+      url: blob.url,
+      image_type: imageType as ImageType,
+      caption,
+      sort_order: 0,
+    });
 
-    return NextResponse.json({ url: blob.url });
+    return NextResponse.json(image);
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

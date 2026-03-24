@@ -21,16 +21,16 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { order_id, plant_id, price_each, quantity } = body;
+    const { order_id, plant_id, variant_id, price_each, quantity } = body;
 
-    if (!order_id || !plant_id || !price_each || !quantity) {
+    if (!order_id || !plant_id || !variant_id || !price_each || !quantity) {
       return NextResponse.json(
-        { error: "order_id, plant_id, price_each, and quantity are required" },
+        { error: "order_id, plant_id, variant_id, price_each, and quantity are required" },
         { status: 400 }
       );
     }
 
-    const item = await createOrderItem(order_id, plant_id, price_each, quantity);
+    const item = await createOrderItem(order_id, plant_id, variant_id, price_each, quantity);
     return NextResponse.json(item, { status: 201 });
   } catch (error) {
     console.error(error);

@@ -26,7 +26,3 @@ Next.js 15 App Router with TypeScript. Single project at repo root.
 ## Writing Style
 
 Never use em dashes in text, comments, commit messages, or documentation. En dashes are fine. Use commas, periods, or parentheses instead of em dashes.
-
-## Legacy Reference
-
-`plantInventory/` (old React+Vite frontend) and `plantInventoryServer/` (old Express backend) are kept for reference. Do not modify or delete them.

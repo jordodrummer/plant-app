@@ -11,10 +11,10 @@ export async function getCategoryById(id: number): Promise<Category | null> {
   return rows[0] || null;
 }
 
-export async function createCategory(name: string, price: number): Promise<Category> {
+export async function createCategory(name: string): Promise<Category> {
   const { rows } = await pool.query(
-    "INSERT INTO categories (name, price) VALUES ($1, $2) RETURNING *",
-    [name, price]
+    "INSERT INTO categories (name) VALUES ($1) RETURNING *",
+    [name]
   );
   return rows[0];
 }

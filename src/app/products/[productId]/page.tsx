@@ -33,17 +33,18 @@ export default async function ProductPage({ params }: Props) {
   return (
     <div className="mx-auto max-w-3xl">
       {plant.image ? (
-        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+        <div className="relative aspect-[16/9] max-h-[400px] w-full overflow-hidden rounded-lg">
           <Image
             src={plant.image}
             alt={plant.cultivar_name}
             fill
             priority
+            sizes="(min-width: 768px) 768px, 100vw"
             className="object-cover"
           />
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg">
+        <div className="max-h-[400px] overflow-hidden rounded-lg">
           <PlantPlaceholder />
         </div>
       )}

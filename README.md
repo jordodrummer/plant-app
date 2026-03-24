@@ -82,6 +82,44 @@ npm run seed
 | `details` | Description of the plant |
 | `image` | URL to the plant image |
 
+### Product Types and Listing Guidelines
+
+Each product page represents one cultivar, hybrid, or seed lot. Products can have multiple purchasable variants on the same page.
+
+**Variant types:**
+
+| Type | Description |
+|------|-------------|
+| **Cutting** | A pre-cut piece from a mother stand, ready to ship |
+| **Cut to Order** | Cut from the mother stand after payment is received |
+| **Mother Stand** | The whole rooted plant that cuttings are taken from |
+| **OP Seeds** | Open pollinated seeds (mother cultivar OP), sold in packs |
+| **Hybrid Seeds** | Cross-pollinated seeds (mother x father), sold in packs |
+
+**Recommended variant notes:**
+
+Use the variant note field to set expectations for customers. Here are suggested wordings:
+
+- **Pre-cut (inventory listing):** "The cut you see here is the cut you get, unless noted as an inventory listing."
+- **Inventory listing (multiple in stock):** "Tips to be cut upon purchase. Inventory listing, so you will likely not receive the exact cut shown here."
+- **Cut to order:** "Allow 7-10 days for cut-to-order listings to callous before shipment."
+
+**Provenance:**
+
+Include lineage and origin information in the product description (details field). This is free-text to handle partial information. Example: "Mother: Lumberjack x Father: Ogun. Sourced from Sacred Succulents, California."
+
+**Image types:**
+
+When uploading images, label them appropriately:
+
+| Label | Use for |
+|-------|---------|
+| Plant | General photo of the cultivar |
+| Mother | Photo of the mother stand |
+| Father | Photo of the father plant (for hybrids/seeds) |
+| Cutting | Photo of an individual cut |
+| Grown Example | Photo of a seedling that was grown from the seeds |
+
 ### Uploading Images
 
 On any product detail page, use the **Upload Image** button to add a photo. Select a file and it will be uploaded to Vercel Blob storage and automatically displayed on the product card and detail page.

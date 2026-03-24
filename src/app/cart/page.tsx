@@ -50,6 +50,7 @@ export default function CartPage() {
                   variant="outline"
                   size="icon-sm"
                   onClick={() => updateQuantity(item.plant_id, item.quantity + 1)}
+                  disabled={item.quantity >= item.max_quantity}
                 >
                   +
                 </Button>

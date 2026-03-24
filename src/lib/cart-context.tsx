@@ -46,9 +46,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => {
       const existing = prev.find((i) => i.plant_id === item.plant_id);
       if (existing) {
+        const newQty = Math.min(existing.quantity + 1, item.max_quantity);
         return prev.map((i) =>
           i.plant_id === item.plant_id
-            ? { ...i, quantity: i.quantity + 1 }
+            ? { ...i, quantity: newQty, max_quantity: item.max_quantity }
             : i
         );
       }
@@ -67,7 +68,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
     setItems((prev) =>
       prev.map((i) =>
-        i.plant_id === plantId ? { ...i, quantity } : i
+        i.plant_id === plantId
+          ? { ...i, quantity: Math.min(quantity, i.max_quantity) }
+          : i
       )
     );
   }, []);

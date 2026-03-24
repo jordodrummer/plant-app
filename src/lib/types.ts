@@ -46,4 +46,5 @@ export type CartItem = {
   cultivar_name: string;
   price: number;
   quantity: number;
+  max_quantity: number;
 };

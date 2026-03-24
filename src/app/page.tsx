@@ -7,6 +7,10 @@ import PlantPlaceholder from "@/components/plant-placeholder";
 
 export const revalidate = 60;
 
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
+}
+
 export default async function Home() {
   const featured = await getFeaturedItems(3);
 
@@ -63,10 +67,10 @@ export default async function Home() {
                     </Link>
                   </CardTitle>
                 </CardHeader>
-                {plant.image ? (
+                {plant.primary_image_url ? (
                   <div className="relative aspect-video w-full overflow-hidden">
                     <Image
-                      src={plant.image}
+                      src={plant.primary_image_url}
                       alt={plant.cultivar_name}
                       fill
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -79,10 +83,8 @@ export default async function Home() {
                 <CardContent>
                   <p className="text-muted-foreground mb-2">{plant.details}</p>
                   <span className="font-semibold">
-                    {new Intl.NumberFormat("en-US", {
-                      style: "currency",
-                      currency: "USD",
-                    }).format(plant.price)}
+                    {plant.variant_count > 1 ? "From " : ""}
+                    {formatPrice(plant.min_price)}
                   </span>
                 </CardContent>
               </Card>

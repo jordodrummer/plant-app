@@ -1,12 +1,15 @@
-import pool from "./client";
+import { getSupabase } from "../supabase/server";
 import type { OrderDetail } from "../types";
 
 export async function getOrderItems(orderId: number): Promise<OrderDetail[]> {
-  const { rows } = await pool.query(
-    "SELECT * FROM order_details WHERE order_id = $1",
-    [orderId]
-  );
-  return rows;
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("order_details")
+    .select("*")
+    .eq("order_id", orderId);
+
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function createOrderItem(
@@ -16,18 +19,30 @@ export async function createOrderItem(
   priceEach: number,
   quantity: number
 ): Promise<OrderDetail> {
-  const { rows } = await pool.query(
-    `INSERT INTO order_details (order_id, plant_id, variant_id, price_each, quantity)
-     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-    [orderId, plantId, variantId, priceEach, quantity]
-  );
-  return rows[0];
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("order_details")
+    .insert({
+      order_id: orderId,
+      plant_id: plantId,
+      variant_id: variantId,
+      price_each: priceEach,
+      quantity,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
 }
 
 export async function deleteOrderItem(id: number): Promise<boolean> {
-  const { rowCount } = await pool.query(
-    "DELETE FROM order_details WHERE id = $1",
-    [id]
-  );
-  return (rowCount ?? 0) > 0;
+  const supabase = getSupabase();
+  const { error, count } = await supabase
+    .from("order_details")
+    .delete({ count: "exact" })
+    .eq("id", id);
+
+  if (error) throw error;
+  return (count ?? 0) > 0;
 }

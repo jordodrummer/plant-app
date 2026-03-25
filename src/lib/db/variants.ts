@@ -1,40 +1,68 @@
-import pool from "./client";
+import { getSupabase } from "../supabase/server";
 import type { PlantVariant } from "../types";
 
 export async function getVariantsByPlantId(plantId: number): Promise<PlantVariant[]> {
-  const { rows } = await pool.query(
-    "SELECT * FROM plant_variants WHERE plant_id = $1 ORDER BY sort_order",
-    [plantId]
-  );
-  return rows;
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("plant_variants")
+    .select("*")
+    .eq("plant_id", plantId)
+    .order("sort_order");
+
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function createVariant(variant: Omit<PlantVariant, "id">): Promise<PlantVariant> {
-  const { rows } = await pool.query(
-    `INSERT INTO plant_variants (plant_id, variant_type, price, inventory, label, note, sort_order)
-     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-    [variant.plant_id, variant.variant_type, variant.price, variant.inventory, variant.label, variant.note, variant.sort_order]
-  );
-  await pool.query(
-    `UPDATE plants SET in_stock = EXISTS(
-      SELECT 1 FROM plant_variants WHERE plant_id = $1 AND inventory > 0
-    ) WHERE id = $1`,
-    [variant.plant_id]
-  );
-  return rows[0];
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("plant_variants")
+    .insert(variant)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  // Update parent plant in_stock
+  const { data: variants } = await supabase
+    .from("plant_variants")
+    .select("inventory")
+    .eq("plant_id", variant.plant_id)
+    .gt("inventory", 0)
+    .limit(1);
+
+  await supabase
+    .from("plants")
+    .update({ in_stock: (variants?.length ?? 0) > 0 })
+    .eq("id", variant.plant_id);
+
+  return data;
 }
 
 export async function updateVariantInventory(id: number, inventory: number): Promise<PlantVariant | null> {
-  const { rows } = await pool.query(
-    "UPDATE plant_variants SET inventory = $1 WHERE id = $2 RETURNING *",
-    [inventory, id]
-  );
-  if (!rows[0]) return null;
-  await pool.query(
-    `UPDATE plants SET in_stock = EXISTS(
-      SELECT 1 FROM plant_variants WHERE plant_id = $1 AND inventory > 0
-    ) WHERE id = $1`,
-    [rows[0].plant_id]
-  );
-  return rows[0];
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("plant_variants")
+    .update({ inventory })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  // Update parent plant in_stock
+  const { data: variants } = await supabase
+    .from("plant_variants")
+    .select("inventory")
+    .eq("plant_id", data.plant_id)
+    .gt("inventory", 0)
+    .limit(1);
+
+  await supabase
+    .from("plants")
+    .update({ in_stock: (variants?.length ?? 0) > 0 })
+    .eq("id", data.plant_id);
+
+  return data;
 }

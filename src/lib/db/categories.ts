@@ -1,20 +1,36 @@
-import pool from "./client";
-import { Category } from "../types";
+import { getSupabase } from "../supabase/server";
+import type { Category } from "../types";
 
 export async function getCategories(): Promise<Category[]> {
-  const { rows } = await pool.query("SELECT * FROM categories");
-  return rows;
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*");
+
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function getCategoryById(id: number): Promise<Category | null> {
-  const { rows } = await pool.query("SELECT * FROM categories WHERE id = $1", [id]);
-  return rows[0] || null;
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error && error.code !== "PGRST116") throw error;
+  return data;
 }
 
 export async function createCategory(name: string): Promise<Category> {
-  const { rows } = await pool.query(
-    "INSERT INTO categories (name) VALUES ($1) RETURNING *",
-    [name]
-  );
-  return rows[0];
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("categories")
+    .insert({ name })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
 }

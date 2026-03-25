@@ -110,7 +110,7 @@ Use the variant note field to set expectations for customers. Here are suggested
 
 **Provenance:**
 
-Include lineage and origin information in the product description (details field). This is free-text to handle partial information. Example: "Mother: Lumberjack x Father: Ogun. Sourced from Sacred Succulents, California."
+Include lineage and origin information in the product description (details field). This is free-text to handle partial information. Example: "Mother: Blizzard x Father: Firebird. Sourced from Magical Succulents, Nevada."
 
 **Image types:**
 

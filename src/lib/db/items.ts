@@ -83,11 +83,18 @@ export async function createItem(item: Omit<Plant, "id">): Promise<Plant> {
   return data;
 }
 
+const ALLOWED_COLUMNS = new Set(["cultivar_name", "category_id", "details", "in_stock"]);
+
 export async function updateItem(id: number, fields: Partial<Omit<Plant, "id">>): Promise<Plant | null> {
+  const filtered = Object.fromEntries(
+    Object.entries(fields).filter(([k, v]) => v !== undefined && ALLOWED_COLUMNS.has(k))
+  );
+  if (Object.keys(filtered).length === 0) return getItemById(id);
+
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("plants")
-    .update(fields)
+    .update(filtered)
     .eq("id", id)
     .select()
     .single();

@@ -50,11 +50,12 @@ export async function updateOrderStatus(id: number, status: string): Promise<Ord
 
 export async function deleteOrder(id: number): Promise<boolean> {
   const supabase = getSupabase();
-  const { error, count } = await supabase
+  const { data, error } = await supabase
     .from("orders")
     .update({ status: "deleted", updated_on: new Date().toISOString() })
-    .eq("id", id);
+    .eq("id", id)
+    .select();
 
   if (error) throw error;
-  return (count ?? 0) > 0;
+  return (data?.length ?? 0) > 0;
 }

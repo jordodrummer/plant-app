@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <footer className="border-t mt-auto">
       <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} Rare Cactus and Succulent Inventory</p>
+        <p>&copy; {new Date().getFullYear()} Rare Succulent Inventory</p>
       </div>
     </footer>
   );

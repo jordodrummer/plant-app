@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { productId } = await params;
   const plant = await getItemById(Number(productId));
   if (!plant) return { title: "Product Not Found" };
-  return { title: `${plant.cultivar_name} | Rare Cactus and Succulent Inventory` };
+  return { title: `${plant.cultivar_name} | Rare Succulent Inventory` };
 }
 
 export default async function ProductPage({ params }: Props) {

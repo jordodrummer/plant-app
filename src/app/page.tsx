@@ -21,7 +21,7 @@ export default async function Home() {
         <div className="container mx-auto grid items-center gap-8 sm:grid-cols-2">
           <div>
             <h1 className="text-3xl font-bold text-white sm:text-4xl">
-              Rare Cactus &amp;<br />Succulent Inventory
+              Rare Succulent<br />Inventory
             </h1>
             <p className="mt-3 text-white/70">
               Hand-picked rare plants shipped to your door

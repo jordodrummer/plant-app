@@ -1,4 +1,4 @@
-# Rare Cactus and Succulent Inventory
+# Rare Succulent Inventory
 
 > Full-stack plant inventory and e-commerce application built with Next.js, TypeScript, and PostgreSQL.
 
@@ -173,8 +173,8 @@ psql cactus_shop
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/jordodrummer/plant-app.git
-cd plant-app
+git clone https://github.com/jordodrummer/rare-succulent-inventory.git
+cd rare-succulent-inventory
 ```
 
 2. **Install dependencies**

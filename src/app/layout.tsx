@@ -8,7 +8,7 @@ import { CartProvider } from "@/lib/cart-context";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Rare Cactus and Succulent Inventory",
+  title: "Rare Succulent Inventory",
   description: "Browse and shop rare cacti and succulents",
 };
 

@@ -1,12 +1,23 @@
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { createImage } from "@/lib/db/images";
+import { createServerSupabase } from "@/lib/supabase/server";
 import type { ImageType } from "@/lib/types";
 
 const VALID_IMAGE_TYPES: ImageType[] = ["plant", "mother", "father", "cutting", "grown_example"];
 
 export async function POST(request: Request) {
   try {
+    // Admin only
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (user.email !== process.env.ADMIN_EMAIL) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const plantId = formData.get("plant_id") as string | null;

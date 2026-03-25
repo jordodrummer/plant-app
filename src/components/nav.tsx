@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CartIcon from "@/components/cart-icon";
+import AuthButton from "@/components/auth-button";
 
 export default function Nav() {
   return (
@@ -11,7 +12,8 @@ export default function Nav() {
         <Link href="/products" className="text-sm text-muted-foreground hover:text-foreground">
           Products
         </Link>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-4">
+          <AuthButton />
           <CartIcon />
         </div>
       </div>

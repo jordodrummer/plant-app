@@ -1,8 +1,24 @@
 import { NextResponse } from "next/server";
 import { getOrders, getOrderById, createOrder, updateOrderStatus, deleteOrder } from "@/lib/db/orders";
+import { createServerSupabase } from "@/lib/supabase/server";
+
+async function requireAuth() {
+  const supabase = await createServerSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+}
+
+function isAdmin(email: string | undefined) {
+  return email === process.env.ADMIN_EMAIL;
+}
 
 export async function GET(request: Request) {
   try {
+    const user = await requireAuth();
+    if (!user || !isAdmin(user.email)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
@@ -24,6 +40,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const user = await requireAuth();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const { customer_id } = body;
 
@@ -41,6 +62,11 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
+    const user = await requireAuth();
+    if (!user || !isAdmin(user.email)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { id, status } = body;
 
@@ -61,6 +87,11 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const user = await requireAuth();
+    if (!user || !isAdmin(user.email)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 

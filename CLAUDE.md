@@ -13,15 +13,15 @@ npm run seed      # Seed the PostgreSQL database
 
 ## Architecture
 
-Next.js 15 App Router with TypeScript. Single project at repo root.
+Next.js 16 App Router with TypeScript. Single project at repo root.
 
-**Frontend:** Server components fetch data directly from PostgreSQL — no client-side fetch pattern. UI built with shadcn/ui + Tailwind CSS. Interactive elements use `"use client"` components.
+**Frontend:** Server components fetch data directly from PostgreSQL via Supabase. UI built with shadcn/ui + Tailwind CSS. Interactive elements use `"use client"` components.
 
-**Data layer:** Raw SQL via `pg` Pool (`src/lib/db/client.ts`). Query functions in `src/lib/db/*.ts` return typed results. Types defined in `src/lib/types.ts`.
+**Data layer:** Supabase JS client (`src/lib/supabase/server.ts`). Query functions in `src/lib/db/*.ts` return typed results. Types defined in `src/lib/types.ts`.
 
 **API routes:** `src/app/api/orders/route.ts` and `src/app/api/order-items/route.ts` handle mutations. Categories and plants are queried directly in server components.
 
-**Database:** PostgreSQL database `cactus_shop`. Tables: `categories`, `plants`, `customers`, `orders`, `order_details`. Connection via `DATABASE_URL` env var with fallback to individual `DB_*` vars.
+**Database:** PostgreSQL on Supabase. Tables: `categories`, `plants`, `plant_variants`, `plant_images`, `customers`, `orders`, `order_details`. Connection via `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` env vars.
 
 ## Writing Style
 

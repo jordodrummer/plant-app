@@ -1,8 +1,20 @@
 import { NextResponse } from "next/server";
 import { getOrderItems, createOrderItem, deleteOrderItem } from "@/lib/db/order-items";
+import { createServerSupabase } from "@/lib/supabase/server";
+
+async function requireAuth() {
+  const supabase = await createServerSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+}
 
 export async function GET(request: Request) {
   try {
+    const user = await requireAuth();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get("order_id");
 
@@ -20,6 +32,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const user = await requireAuth();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const { order_id, plant_id, variant_id, price_each, quantity } = body;
 
@@ -40,6 +57,11 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const user = await requireAuth();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 

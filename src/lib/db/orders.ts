@@ -1,36 +1,60 @@
-import pool from "./client";
-import { Order } from "../types";
+import { getSupabase } from "../supabase/server";
+import type { Order } from "../types";
 
 export async function getOrders(): Promise<Order[]> {
-  const { rows } = await pool.query("SELECT * FROM orders");
-  return rows;
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*");
+
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function getOrderById(id: number): Promise<Order | null> {
-  const { rows } = await pool.query("SELECT * FROM orders WHERE id = $1", [id]);
-  return rows[0] || null;
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error && error.code !== "PGRST116") throw error;
+  return data;
 }
 
 export async function createOrder(customerId: number): Promise<Order> {
-  const { rows } = await pool.query(
-    "INSERT INTO orders (customer_id) VALUES ($1) RETURNING *",
-    [customerId]
-  );
-  return rows[0];
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("orders")
+    .insert({ customer_id: customerId })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
 }
 
 export async function updateOrderStatus(id: number, status: string): Promise<Order | null> {
-  const { rows } = await pool.query(
-    "UPDATE orders SET status = $1, updated_on = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *",
-    [status, id]
-  );
-  return rows[0] || null;
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ status, updated_on: new Date().toISOString() })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error && error.code !== "PGRST116") throw error;
+  return data;
 }
 
 export async function deleteOrder(id: number): Promise<boolean> {
-  const { rowCount } = await pool.query(
-    "UPDATE orders SET status = 'deleted', updated_on = CURRENT_TIMESTAMP WHERE id = $1",
-    [id]
-  );
-  return (rowCount ?? 0) > 0;
+  const supabase = getSupabase();
+  const { error, count } = await supabase
+    .from("orders")
+    .update({ status: "deleted", updated_on: new Date().toISOString() })
+    .eq("id", id);
+
+  if (error) throw error;
+  return (count ?? 0) > 0;
 }

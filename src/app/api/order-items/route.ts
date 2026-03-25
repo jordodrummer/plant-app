@@ -8,11 +8,15 @@ async function requireAuth() {
   return user;
 }
 
+function isAdmin(email: string | undefined) {
+  return email === process.env.ADMIN_EMAIL;
+}
+
 export async function GET(request: Request) {
   try {
     const user = await requireAuth();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user || !isAdmin(user.email)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -58,8 +62,8 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const user = await requireAuth();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user || !isAdmin(user.email)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const { searchParams } = new URL(request.url);

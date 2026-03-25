@@ -1,12 +1,14 @@
 # Rare Succulent Inventory
 
-> Full-stack plant inventory and e-commerce application built with Next.js, TypeScript, and PostgreSQL.
+> Full-stack plant inventory and e-commerce application built with Next.js, TypeScript, Supabase, and Tailwind CSS.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)
+![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ecf8e?logo=supabase)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38bdf8?logo=tailwindcss)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)
+
+**[Live Site](https://raresucculentinventory.com)** | **[Project Board](https://github.com/users/jordodrummer/projects/5)**
 
 ## Table of Contents
 
@@ -28,11 +30,15 @@
 ## Features
 
 - **Product browsing** with server-side rendering for fast page loads
-- **Shopping cart** with localStorage persistence across sessions
-- **Image uploads** via Vercel Blob storage
+- **Multi-variant products** (cuttings, cut-to-order, mother stands, seeds) with per-variant pricing and inventory
+- **Multi-image gallery** with labeled photos (plant, mother, father, cutting, grown example)
+- **Shopping cart** with localStorage persistence and inventory enforcement
+- **Image uploads** via Vercel Blob storage with type and caption metadata
+- **Authentication** with email/password via Supabase Auth
+- **Role-based access control** (admin vs customer) on all API routes
 - **Order management** API with full CRUD operations
 - **Responsive UI** built with shadcn/ui components
-- **Type-safe database layer** using raw SQL with PostgreSQL
+- **Deployed** on Vercel with Cloudflare DNS and SSL
 
 ---
 
@@ -40,21 +46,26 @@
 
 ### Browsing Products
 
-Visit the site and you'll see a grid of available plants. Each card shows the plant name, description, and price. Click **Details** to view the full product page with stock status, category, and inventory count.
+Visit the site and you'll see a grid of available plants. Each card shows the plant name, description, and starting price. Click the card to view the full product page with image gallery, variant options, stock status, and provenance details.
 
 ### Shopping Cart
 
-- Click **Add to Cart** on any product detail page
+- Choose a variant (cutting, mother stand, seeds, etc.) and quantity on the product detail page
 - Visit the **Cart** page from the navigation bar to view your items
 - Adjust quantities or remove items directly in the cart
-- Your cart total updates automatically
-- Your cart is saved in your browser. It persists even if you close the tab and come back
+- Quantities are capped at available inventory
+- Your cart is saved in your browser and persists across page refreshes
+
+### Account
+
+- Click **Sign In** in the navigation bar to create an account or sign in
+- Accounts are required for checkout (coming soon)
 
 ### Coming Soon
 
 - Checkout with Stripe payments
 - Order tracking and history
-- User accounts
+- Google OAuth sign-in
 
 ---
 
@@ -62,25 +73,17 @@ Visit the site and you'll see a grid of available plants. Each card shows the pl
 
 ### Managing Inventory
 
-The database comes pre-loaded with sample plant data. To reset and re-seed:
+The database is hosted on Supabase. Use the [Supabase dashboard](https://supabase.com/dashboard) to manage data directly, or use the seed script for development:
 
 ```bash
 npm run seed
 ```
 
-> **Warning:** This is a destructive operation. It drops all tables and recreates them with sample data.
+> **Warning:** The seed script is destructive. It drops all tables and recreates them with sample data. Only use for development.
 
 **Plant data model:**
 
-| Field | Description |
-|-------|-------------|
-| `cultivar_name` | Name of the plant cultivar |
-| `category_id` | Category (seeds, cuts, stands) |
-| `price` | Price in whole dollars |
-| `inventory` | Number of units in stock |
-| `in_stock` | Whether the item is available |
-| `details` | Description of the plant |
-| `image` | URL to the plant image |
+Each plant has a `cultivar_name`, `category_id`, `details` (free-text provenance), and an `in_stock` flag. Pricing and inventory live on **variants**, not the plant itself.
 
 ### Product Types and Listing Guidelines
 
@@ -100,13 +103,12 @@ Each product page represents one cultivar, hybrid, or seed lot. Products can hav
 
 **Recommended variant notes:**
 
-Use the variant note field to set expectations for customers. Here are suggested wordings:
+Use the variant note field to set expectations for customers:
 
 - **Cut to order:** "The cut you get will be taken from the same part of the plant as pictured."
 - **Cut to Order, Inventory listing (multiple in stock):** "Tips to be cut upon purchase. Inventory listing, so you will likely not receive the exact cut shown here."
 - **Pre-cut:** "The cut you get will be the same piece as pictured."
 - **Pre-cut, Inventory listing (multiple in stock):** "Inventory listing, so you will likely not receive the exact cut shown here."
-
 
 **Provenance:**
 
@@ -126,13 +128,13 @@ When uploading images, label them appropriately:
 
 ### Uploading Images
 
-On any product detail page, use the **Upload Image** button to add a photo. Select a file and it will be uploaded to Vercel Blob storage and automatically displayed on the product card and detail page.
+On any product detail page, use the **Upload Image** button to select an image type, add an optional caption, and upload. Images are stored in Vercel Blob and displayed in the product gallery.
 
-> **Note:** Image upload is currently accessible to all users. It will be restricted to admin-only once authentication is implemented.
+> **Note:** Image upload is restricted to admin users only.
 
 ### Managing Orders
 
-Orders are managed through the API (an admin portal UI is planned):
+Orders are managed through the API (admin portal UI is planned). All order endpoints require admin authentication.
 
 - **Create** an order for a customer
 - **Update status** through the workflow: `pending` → `processing` → `shipped` → `delivered`
@@ -142,21 +144,19 @@ See the [API Reference](#api-reference) below for endpoint details.
 
 ### Database Access
 
-Connect directly to inspect or modify data:
-
-```bash
-psql cactus_shop
-```
+Data is hosted on Supabase PostgreSQL. Use the Supabase dashboard SQL editor or Table editor to inspect and modify data.
 
 **Tables:**
 
 | Table | Description |
 |-------|-------------|
 | `categories` | Product categories (seeds, cuts, stands) |
-| `plants` | Plant inventory items |
+| `plants` | Plant cultivars with provenance details |
+| `plant_variants` | Purchasable options per plant (type, price, inventory) |
+| `plant_images` | Gallery images with type labels and captions |
 | `customers` | Customer records |
 | `orders` | Order records with status tracking |
-| `order_details` | Line items within orders |
+| `order_details` | Line items within orders (tracks variant_id) |
 
 ---
 
@@ -166,7 +166,7 @@ psql cactus_shop
 
 - [Node.js](https://nodejs.org/) v18 or higher
 - npm
-- [PostgreSQL](https://www.postgresql.org/)
+- A [Supabase](https://supabase.com/) project (free tier works)
 
 ### Getting Started
 
@@ -183,27 +183,21 @@ cd rare-succulent-inventory
 npm install
 ```
 
-3. **Create the database**
-
-```bash
-createdb cactus_shop
-```
-
-4. **Set up environment variables**
+3. **Set up environment variables**
 
 Create a `.env.local` file in the project root:
 
 ```
-DATABASE_URL=postgresql://YOUR_USERNAME@localhost:5432/cactus_shop
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+ADMIN_EMAIL=your-email@example.com
 ```
 
-5. **Seed the database**
+4. **Create tables in Supabase**
 
-```bash
-npm run seed
-```
+Run the SQL from `src/lib/db/seed.ts` in your Supabase SQL editor to create the schema and seed sample data.
 
-6. **Start the dev server**
+5. **Start the dev server**
 
 ```bash
 npm run dev
@@ -213,53 +207,63 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ### Environment Variables
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `DATABASE_URL` | Yes (or use fallbacks) | | PostgreSQL connection string |
-| `DB_HOST` | No | `localhost` | Database host (fallback) |
-| `DB_NAME` | No | `cactus_shop` | Database name (fallback) |
-| `DB_USER` | No | `your_pg_username` | Database user (fallback) |
-| `DB_PASS` | No | `""` | Database password (fallback) |
-| `DB_PORT` | No | `5432` | Database port (fallback) |
-| `BLOB_READ_WRITE_TOKEN` | For image uploads | | Vercel Blob storage token (required in production) |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase publishable anon key |
+| `ADMIN_EMAIL` | Yes | Email address for the admin user (server-only) |
+| `BLOB_READ_WRITE_TOKEN` | For image uploads | Vercel Blob storage token (required in production) |
 
 ### Project Structure
 
 ```
 src/
 ├── app/                        # Pages and API routes (file-based routing)
-│   ├── layout.tsx              # Root layout with nav and CartProvider
-│   ├── page.tsx                # Home page
+│   ├── layout.tsx              # Root layout with nav, footer, CartProvider
+│   ├── page.tsx                # Home page with hero and featured plants
 │   ├── error.tsx               # Global error boundary
+│   ├── auth/
+│   │   ├── sign-in/page.tsx    # Sign-in page (email/password)
+│   │   ├── sign-up/page.tsx    # Sign-up page
+│   │   └── callback/route.ts   # OAuth callback handler
 │   ├── products/
 │   │   ├── page.tsx            # Product list (server component)
 │   │   └── [productId]/
-│   │       ├── page.tsx        # Product detail (server component)
+│   │       ├── page.tsx        # Product detail with gallery and variants
 │   │       └── not-found.tsx   # 404 for invalid products
 │   ├── cart/
 │   │   └── page.tsx            # Shopping cart page
 │   └── api/
-│       ├── orders/route.ts     # Orders CRUD
-│       ├── order-items/route.ts # Order items CRUD
-│       └── upload/route.ts     # Image upload
+│       ├── orders/route.ts     # Orders CRUD (admin-only)
+│       ├── order-items/route.ts # Order items CRUD (auth required)
+│       └── upload/route.ts     # Image upload (admin-only)
 ├── components/
 │   ├── ui/                     # shadcn/ui components (Button, Card)
 │   ├── nav.tsx                 # Navigation bar
 │   ├── footer.tsx              # Footer
+│   ├── auth-button.tsx         # Sign In / Sign Out button
 │   ├── cart-icon.tsx           # Cart badge in nav
-│   ├── add-to-cart-button.tsx  # Add to Cart button
-│   └── image-upload.tsx        # Image upload component
-└── lib/
-    ├── types.ts                # TypeScript type definitions
-    ├── cart-context.tsx         # Cart state with localStorage
-    ├── utils.ts                # Utility functions (cn)
-    └── db/
-        ├── client.ts           # PostgreSQL connection pool
-        ├── seed.ts             # Database seed script
-        ├── categories.ts       # Category queries
-        ├── items.ts            # Plant/item queries
-        ├── orders.ts           # Order queries
-        └── order-items.ts      # Order item queries
+│   ├── image-gallery.tsx       # Multi-image gallery with type badges
+│   ├── variant-selector.tsx    # Variant list with add-to-cart
+│   ├── image-upload.tsx        # Image upload with type/caption
+│   └── plant-placeholder.tsx   # SVG placeholder for missing images
+├── lib/
+│   ├── types.ts                # TypeScript type definitions
+│   ├── cart-context.tsx         # Cart state with localStorage
+│   ├── utils.ts                # Utility functions (cn)
+│   ├── supabase/
+│   │   ├── server.ts           # Supabase server client (data + auth)
+│   │   ├── client.ts           # Supabase browser client
+│   │   └── middleware.ts       # Session refresh helper
+│   └── db/
+│       ├── seed.ts             # Database seed script
+│       ├── categories.ts       # Category queries
+│       ├── items.ts            # Plant/item queries (with variant joins)
+│       ├── variants.ts         # Variant queries
+│       ├── images.ts           # Image queries
+│       ├── orders.ts           # Order queries
+│       └── order-items.ts      # Order item queries
+└── middleware.ts               # Next.js middleware (auth session refresh)
 ```
 
 ### Tech Stack
@@ -271,33 +275,41 @@ src/
 | [TypeScript 5](https://www.typescriptlang.org/) | Type safety |
 | [Tailwind CSS 4](https://tailwindcss.com/) | Utility-first styling |
 | [shadcn/ui](https://ui.shadcn.com/) | Component library |
-| [PostgreSQL](https://www.postgresql.org/) | Database (via `pg`) |
+| [Supabase](https://supabase.com/) | PostgreSQL database and authentication |
+| [Vercel](https://vercel.com/) | Hosting and deployment |
 | [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) | Image storage |
+| [Cloudflare](https://cloudflare.com/) | Domain, DNS, and SSL |
 
 ### API Reference
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/orders` | `GET` | List all orders, or single order with `?id=` |
-| `/api/orders` | `POST` | Create order. Body: `{ customer_id }` |
-| `/api/orders` | `PUT` | Update order status. Body: `{ id, status }` |
-| `/api/orders` | `DELETE` | Soft-delete order with `?id=` |
-| `/api/order-items` | `GET` | List items for an order with `?order_id=` |
-| `/api/order-items` | `POST` | Add item. Body: `{ order_id, plant_id, price_each, quantity }` |
-| `/api/order-items` | `DELETE` | Remove item with `?id=` |
-| `/api/upload` | `POST` | Upload image. FormData with `file` and `plant_id` fields |
+All mutation endpoints require authentication. Admin-only endpoints are marked.
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/api/orders` | `GET` | Admin | List all orders, or single order with `?id=` |
+| `/api/orders` | `POST` | Signed in | Create order. Body: `{ customer_id }` |
+| `/api/orders` | `PUT` | Admin | Update order status. Body: `{ id, status }` |
+| `/api/orders` | `DELETE` | Admin | Soft-delete order with `?id=` |
+| `/api/order-items` | `GET` | Admin | List items for an order with `?order_id=` |
+| `/api/order-items` | `POST` | Signed in | Add item. Body: `{ order_id, plant_id, variant_id, price_each, quantity }` |
+| `/api/order-items` | `DELETE` | Admin | Remove item with `?id=` |
+| `/api/upload` | `POST` | Admin | Upload image. FormData with `file`, `plant_id`, `image_type`, `caption` |
 
 ### Deployment
 
-**Recommended: [Vercel](https://vercel.com/)**
+**Production: [Vercel](https://vercel.com/) + [Supabase](https://supabase.com/) + [Cloudflare](https://cloudflare.com/)**
 
-1. Push your repo to GitHub
-2. Import the project in Vercel
-3. Set environment variables:
-   - `DATABASE_URL` - use [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) for production (provides auto-backups, SSL, and connection pooling)
-   - `BLOB_READ_WRITE_TOKEN` - generated in Vercel Blob storage settings
+1. Create a Supabase project and run the schema SQL
+2. Import the repo in Vercel
+3. Set environment variables in Vercel:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `ADMIN_EMAIL`
+   - `BLOB_READ_WRITE_TOKEN` (from Vercel Blob settings)
+4. Configure your domain in Cloudflare DNS (A record to Vercel IP, CNAME for www)
+5. Add the domain in Vercel project settings
 
-The app will build and deploy automatically on every push.
+The app auto-deploys on every push to master.
 
 ---
 

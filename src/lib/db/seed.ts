@@ -44,12 +44,15 @@ async function createTables() {
     CREATE TABLE plant_variants (
       id SERIAL PRIMARY KEY,
       plant_id INTEGER NOT NULL REFERENCES plants(id) ON DELETE CASCADE,
-      variant_type VARCHAR(20) NOT NULL CHECK (variant_type IN ('cutting', 'rooted_cutting', 'cut_to_order', 'mother_stand', 'seedling', 'op_seeds', 'hybrid_seeds')),
+      variant_type VARCHAR(20) NOT NULL CHECK (variant_type IN ('cutting', 'rooted_cutting', 'cut_to_order', 'mother_stand', 'seedling', 'op_seeds', 'hybrid_seeds', 'special')),
       price INTEGER NOT NULL,
       inventory INTEGER DEFAULT 0,
       label VARCHAR(100),
       note TEXT,
-      sort_order INTEGER DEFAULT 0
+      sort_order INTEGER DEFAULT 0,
+      weight_lbs INTEGER DEFAULT 0,
+      weight_oz INTEGER DEFAULT 0,
+      shipping_override INTEGER
     );
   `);
 
@@ -94,6 +97,16 @@ async function createTables() {
       variant_id INTEGER REFERENCES plant_variants(id),
       price_each INTEGER,
       quantity INTEGER
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE shipping_config (
+      id SERIAL PRIMARY KEY,
+      variant_type VARCHAR(20) UNIQUE NOT NULL,
+      method VARCHAR(10) NOT NULL CHECK (method IN ('flat', 'realtime')),
+      base_price INTEGER,
+      additional_price INTEGER
     );
   `);
 
@@ -173,6 +186,18 @@ async function seedData() {
   await client.query(`
     INSERT INTO customers (name, address, city, state, zip, email) VALUES
       ('Test Customer', '123 Main St', 'Denver', 'CO', '80202', 'test@example.com');
+  `);
+
+  await client.query(`
+    INSERT INTO shipping_config (variant_type, method, base_price, additional_price) VALUES
+      ('cutting', 'flat', 600, 150),
+      ('rooted_cutting', 'realtime', NULL, NULL),
+      ('cut_to_order', 'realtime', NULL, NULL),
+      ('mother_stand', 'realtime', NULL, NULL),
+      ('seedling', 'realtime', NULL, NULL),
+      ('op_seeds', 'flat', 400, 100),
+      ('hybrid_seeds', 'flat', 400, 100),
+      ('special', 'realtime', NULL, NULL);
   `);
 
   console.log("Finished seeding data.");

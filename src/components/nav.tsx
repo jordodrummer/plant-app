@@ -1,6 +1,7 @@
 import Link from "next/link";
 import CartIcon from "@/components/cart-icon";
 import AuthButton from "@/components/auth-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Nav() {
   return (
@@ -13,6 +14,7 @@ export default function Nav() {
           Products
         </Link>
         <div className="ml-auto flex items-center gap-4">
+          <ThemeToggle />
           <AuthButton />
           <CartIcon />
         </div>

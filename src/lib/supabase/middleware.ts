@@ -31,7 +31,12 @@ export async function updateSession(request: NextRequest) {
     if (!user || user.email !== process.env.ADMIN_EMAIL) {
       const signInUrl = request.nextUrl.clone();
       signInUrl.pathname = "/auth/sign-in";
-      return NextResponse.redirect(signInUrl);
+      const redirectResponse = NextResponse.redirect(signInUrl);
+      // Preserve session cookies on redirect
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        redirectResponse.cookies.set(cookie.name, cookie.value);
+      });
+      return redirectResponse;
     }
   }
 

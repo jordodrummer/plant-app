@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
+import ShippingEstimate from "./shipping-estimate";
 
 function formatPrice(price: number): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(price);
@@ -76,7 +77,11 @@ export default function CartPage() {
         ))}
       </div>
 
-      <div className="mt-6 flex items-center justify-between border-t pt-4">
+      <div className="mt-6">
+        <ShippingEstimate />
+      </div>
+
+      <div className="mt-4 flex items-center justify-between border-t pt-4">
         <span className="text-lg font-bold">Total: {formatPrice(totalPrice)}</span>
         <Button nativeButton={false} render={<Link href="/products" />} variant="outline">
           Continue Shopping

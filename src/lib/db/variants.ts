@@ -67,14 +67,21 @@ export async function updateVariantInventory(id: number, inventory: number): Pro
   return data;
 }
 
+const VARIANT_ALLOWED_COLUMNS = new Set(["variant_type", "price", "inventory", "label", "note", "sort_order"]);
+
 export async function updateVariant(
   id: number,
   fields: Partial<Omit<PlantVariant, "id" | "plant_id">>
 ): Promise<PlantVariant | null> {
+  const filtered = Object.fromEntries(
+    Object.entries(fields).filter(([k, v]) => v !== undefined && VARIANT_ALLOWED_COLUMNS.has(k))
+  );
+  if (Object.keys(filtered).length === 0) return null;
+
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("plant_variants")
-    .update(fields)
+    .update(filtered)
     .eq("id", id)
     .select()
     .single();

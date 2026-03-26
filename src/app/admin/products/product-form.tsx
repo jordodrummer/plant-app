@@ -121,17 +121,19 @@ export default function ProductForm({ plant, variants, images, categories }: Pro
         };
 
         if (row.id) {
-          await fetch(`/api/variants/${row.id}`, {
+          const res = await fetch(`/api/variants/${row.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(variantBody),
           });
+          if (!res.ok) throw new Error("Failed to update variant");
         } else {
-          await fetch("/api/variants", {
+          const res = await fetch("/api/variants", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(variantBody),
           });
+          if (!res.ok) throw new Error("Failed to create variant");
         }
       }
 
@@ -140,7 +142,8 @@ export default function ProductForm({ plant, variants, images, categories }: Pro
         const keepIds = new Set(variantRows.filter((r) => r.id).map((r) => r.id));
         for (const v of variants) {
           if (!keepIds.has(v.id)) {
-            await fetch(`/api/variants/${v.id}`, { method: "DELETE" });
+            const res = await fetch(`/api/variants/${v.id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Failed to delete variant");
           }
         }
       }

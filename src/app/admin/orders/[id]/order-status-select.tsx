@@ -15,18 +15,24 @@ export default function OrderStatusSelect({
 }) {
   const [status, setStatus] = useState(currentStatus);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(false);
   const router = useRouter();
 
   async function handleSave() {
     if (status === currentStatus) return;
     setSaving(true);
+    setError(false);
     const res = await fetch("/api/orders", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: orderId, status }),
     });
     setSaving(false);
-    if (res.ok) router.refresh();
+    if (res.ok) {
+      router.refresh();
+    } else {
+      setError(true);
+    }
   }
 
   return (
@@ -46,6 +52,7 @@ export default function OrderStatusSelect({
       <Button size="sm" onClick={handleSave} disabled={saving || status === currentStatus}>
         {saving ? "Saving..." : "Save"}
       </Button>
+      {error && <span className="text-xs text-red-500">Failed to update</span>}
     </div>
   );
 }

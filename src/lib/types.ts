@@ -77,3 +77,8 @@ export type CartItem = {
   quantity: number;
   max_quantity: number;
 };
+
+export type CustomerWithStats = Customer & {
+  order_count: number;
+  total_spent: number;
+};

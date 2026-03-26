@@ -24,8 +24,16 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  // Refresh the session (important for keeping auth alive)
-  await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Protect /admin routes
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    if (!user || user.email !== process.env.ADMIN_EMAIL) {
+      const signInUrl = request.nextUrl.clone();
+      signInUrl.pathname = "/auth/sign-in";
+      return NextResponse.redirect(signInUrl);
+    }
+  }
 
   return supabaseResponse;
 }

@@ -35,3 +35,13 @@ export async function deleteImage(id: number): Promise<boolean> {
   if (error) throw error;
   return (count ?? 0) > 0;
 }
+
+export async function deleteImagesByPlantId(plantId: number): Promise<void> {
+  const supabase = getSupabase();
+  const { error } = await supabase
+    .from("plant_images")
+    .delete()
+    .eq("plant_id", plantId);
+
+  if (error) throw error;
+}

@@ -8,7 +8,7 @@ import type { Plant, PlantVariant, PlantImage, Category, VariantType } from "@/l
 
 const VARIANT_TYPES: VariantType[] = [
   "cutting", "rooted_cutting", "cut_to_order", "mother_stand",
-  "seedling", "op_seeds", "hybrid_seeds",
+  "seedling", "op_seeds", "hybrid_seeds", "special",
 ];
 
 type VariantRow = {

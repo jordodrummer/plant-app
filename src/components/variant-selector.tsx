@@ -13,6 +13,7 @@ const VARIANT_TYPE_LABELS: Record<VariantType, string> = {
   seedling: "Seedling",
   op_seeds: "OP Seeds",
   hybrid_seeds: "Hybrid Seeds",
+  special: "Special",
 };
 
 function formatPrice(price: number): string {

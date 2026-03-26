@@ -1,4 +1,4 @@
-export type VariantType = 'cutting' | 'rooted_cutting' | 'cut_to_order' | 'mother_stand' | 'seedling' | 'op_seeds' | 'hybrid_seeds';
+export type VariantType = 'cutting' | 'rooted_cutting' | 'cut_to_order' | 'mother_stand' | 'seedling' | 'op_seeds' | 'hybrid_seeds' | 'special';
 export type ImageType = 'plant' | 'mother' | 'father' | 'cutting' | 'grown_example';
 
 export type Category = {
@@ -23,6 +23,9 @@ export type PlantVariant = {
   label: string | null;
   note: string | null;
   sort_order: number;
+  weight_lbs: number;
+  weight_oz: number;
+  shipping_override: number | null;
 };
 
 export type PlantImage = {
@@ -81,4 +84,12 @@ export type CartItem = {
 export type CustomerWithStats = Customer & {
   order_count: number;
   total_spent: number;
+};
+
+export type ShippingConfig = {
+  id: number;
+  variant_type: VariantType;
+  method: 'flat' | 'realtime';
+  base_price: number | null;
+  additional_price: number | null;
 };

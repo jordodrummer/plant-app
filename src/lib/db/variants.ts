@@ -67,7 +67,7 @@ export async function updateVariantInventory(id: number, inventory: number): Pro
   return data;
 }
 
-const VARIANT_ALLOWED_COLUMNS = new Set(["variant_type", "price", "inventory", "label", "note", "sort_order"]);
+const VARIANT_ALLOWED_COLUMNS = new Set(["variant_type", "price", "inventory", "label", "note", "sort_order", "weight_lbs", "weight_oz", "shipping_override"]);
 
 export async function updateVariant(
   id: number,

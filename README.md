@@ -132,15 +132,29 @@ On any product detail page, use the **Upload Image** button to select an image t
 
 > **Note:** Image upload is restricted to admin users only.
 
+### Seed Data Spreadsheet Format
+
+To prepare plant data in a Google Sheet for bulk import, use one row per variant:
+
+| cultivar_name | category | details | variant_type | price | inventory | label | note |
+|---|---|---|---|---|---|---|---|
+| Echeveria Lola | Succulent | Pale purple rosette. Sourced from Korean nursery. | cutting | 15 | 8 | | The cut you see here is the cut you get. |
+| Echeveria Lola | Succulent | Pale purple rosette. Sourced from Korean nursery. | mother_stand | 45 | 1 | | |
+| Golden Barrel | Cactus | Round cactus with golden spines. Mother: Wild collected Baja California. | op_seeds | 8 | 20 | Pack of 100 | |
+| Burro's Tail | Cactus | Trailing succulent. Mother: S. morganianum x Father: S. burrito. | hybrid_seeds | 12 | 10 | Pack of 50 | |
+
+Repeat the cultivar name, category, and details on each row. Rows with the same cultivar name will be grouped into one plant with multiple variants during import.
+
+**Valid variant_type values:** `cutting`, `rooted_cutting`, `cut_to_order`, `mother_stand`, `seedling`, `op_seeds`, `hybrid_seeds`
+
 ### Managing Orders
 
-Orders are managed through the API (admin portal UI is planned). All order endpoints require admin authentication.
+Orders are managed through the admin portal at `/admin/orders`. All order endpoints require admin authentication.
 
-- **Create** an order for a customer
-- **Update status** through the workflow: `pending` → `processing` → `shipped` → `delivered`
-- **Soft-delete** orders (sets status to `deleted` rather than removing the record)
-
-See the [API Reference](#api-reference) below for endpoint details.
+- View all orders with status badges and totals
+- Click into an order to see customer info and line items
+- Update status through the workflow: `pending` → `confirmed` → `shipped` → `delivered`
+- Soft-delete orders (sets status to `deleted` rather than removing the record)
 
 ### Database Access
 
@@ -150,7 +164,7 @@ Data is hosted on Supabase PostgreSQL. Use the Supabase dashboard SQL editor or 
 
 | Table | Description |
 |-------|-------------|
-| `categories` | Product categories (seeds, cuts, stands) |
+| `categories` | Product categories (e.g., Cactus, Succulent) |
 | `plants` | Plant cultivars with provenance details |
 | `plant_variants` | Purchasable options per plant (type, price, inventory) |
 | `plant_images` | Gallery images with type labels and captions |

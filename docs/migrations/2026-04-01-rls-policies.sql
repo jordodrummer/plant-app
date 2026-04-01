@@ -146,3 +146,41 @@ DROP POLICY IF EXISTS admin_delete ON shipping_config;
 CREATE POLICY admin_delete ON shipping_config
   FOR DELETE
   USING (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com');
+
+-- ============================================================
+-- Section 2: Customers Table
+-- Policy rules:
+--   own_read     -- customer can SELECT their own row, admin can SELECT all
+--   admin_insert -- only admin can INSERT
+--   admin_update -- only admin can UPDATE
+--   admin_delete -- only admin can DELETE
+-- ============================================================
+
+-- ------------------------------------------------------------
+-- customers
+-- ------------------------------------------------------------
+ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS own_read ON customers;
+CREATE POLICY own_read ON customers
+  FOR SELECT
+  USING (
+    email = auth.jwt() ->> 'email'
+    OR auth.jwt() ->> 'email' = 'ejumlauf@gmail.com'
+  );
+
+DROP POLICY IF EXISTS admin_insert ON customers;
+CREATE POLICY admin_insert ON customers
+  FOR INSERT
+  WITH CHECK (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com');
+
+DROP POLICY IF EXISTS admin_update ON customers;
+CREATE POLICY admin_update ON customers
+  FOR UPDATE
+  USING (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com');
+
+DROP POLICY IF EXISTS admin_delete ON customers;
+CREATE POLICY admin_delete ON customers
+  FOR DELETE
+  USING (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com');

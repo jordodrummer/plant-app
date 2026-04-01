@@ -1,3 +1,5 @@
+BEGIN;
+
 -- RLS Policies Migration
 -- Date: 2026-04-01
 -- Description: Enable Row Level Security on all tables and add policies.
@@ -169,6 +171,10 @@ CREATE POLICY own_read ON customers
     OR auth.jwt() ->> 'email' = 'ejumlauf@gmail.com'
   );
 
+DROP POLICY IF EXISTS "self_insert" ON customers;
+CREATE POLICY "self_insert" ON customers FOR INSERT
+  WITH CHECK (email = auth.jwt() ->> 'email');
+
 DROP POLICY IF EXISTS admin_insert ON customers;
 CREATE POLICY admin_insert ON customers
   FOR INSERT
@@ -267,3 +273,5 @@ DROP POLICY IF EXISTS admin_delete ON order_details;
 CREATE POLICY admin_delete ON order_details
   FOR DELETE
   USING (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com');
+
+COMMIT;

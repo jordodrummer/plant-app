@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase/server";
+import { getServiceSupabase } from "@/lib/supabase/server";
 import { getShippingConfig } from "@/lib/db/shipping";
 import { calculateShipping } from "@/lib/shipping/calculator";
 
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     // Fetch variant details for all items
     const variantIds = items.map((i: { variant_id: number }) => i.variant_id);
-    const supabase = getSupabase();
+    const supabase = getServiceSupabase();
     const { data: variants, error } = await supabase
       .from("plant_variants")
       .select("id, variant_type, weight_lbs, weight_oz, shipping_override")

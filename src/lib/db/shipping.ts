@@ -1,8 +1,8 @@
-import { getSupabase } from "../supabase/server";
+import { getServiceSupabase } from "../supabase/server";
 import type { ShippingConfig } from "../types";
 
 export async function getShippingConfig(): Promise<ShippingConfig[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("shipping_config")
     .select("*")
@@ -13,7 +13,7 @@ export async function getShippingConfig(): Promise<ShippingConfig[]> {
 }
 
 export async function upsertShippingConfig(configs: Omit<ShippingConfig, "id">[]): Promise<void> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
 
   for (const config of configs) {
     const { error } = await supabase

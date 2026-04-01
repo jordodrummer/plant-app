@@ -1,8 +1,8 @@
-import { getSupabase } from "../supabase/server";
+import { getServiceSupabase } from "../supabase/server";
 import type { PlantImage } from "../types";
 
 export async function getImagesByPlantId(plantId: number): Promise<PlantImage[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plant_images")
     .select("*")
@@ -14,7 +14,7 @@ export async function getImagesByPlantId(plantId: number): Promise<PlantImage[]>
 }
 
 export async function createImage(image: Omit<PlantImage, "id">): Promise<PlantImage> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plant_images")
     .insert(image)
@@ -26,7 +26,7 @@ export async function createImage(image: Omit<PlantImage, "id">): Promise<PlantI
 }
 
 export async function deleteImage(id: number): Promise<boolean> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { error, count } = await supabase
     .from("plant_images")
     .delete({ count: "exact" })
@@ -37,7 +37,7 @@ export async function deleteImage(id: number): Promise<boolean> {
 }
 
 export async function deleteImagesByPlantId(plantId: number): Promise<void> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { error } = await supabase
     .from("plant_images")
     .delete()

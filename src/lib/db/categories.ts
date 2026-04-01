@@ -1,8 +1,8 @@
-import { getSupabase } from "../supabase/server";
+import { getServiceSupabase } from "../supabase/server";
 import type { Category } from "../types";
 
 export async function getCategories(): Promise<Category[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("categories")
     .select("*");
@@ -12,7 +12,7 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function getCategoryById(id: number): Promise<Category | null> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("categories")
     .select("*")
@@ -24,7 +24,7 @@ export async function getCategoryById(id: number): Promise<Category | null> {
 }
 
 export async function createCategory(name: string): Promise<Category> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("categories")
     .insert({ name })

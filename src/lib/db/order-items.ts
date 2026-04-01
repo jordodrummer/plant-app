@@ -1,8 +1,8 @@
-import { getSupabase } from "../supabase/server";
+import { getServiceSupabase } from "../supabase/server";
 import type { OrderDetail } from "../types";
 
 export async function getOrderItems(orderId: number): Promise<OrderDetail[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("order_details")
     .select("*")
@@ -19,7 +19,7 @@ export async function createOrderItem(
   priceEach: number,
   quantity: number
 ): Promise<OrderDetail> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("order_details")
     .insert({
@@ -37,7 +37,7 @@ export async function createOrderItem(
 }
 
 export async function deleteOrderItem(id: number): Promise<boolean> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { error, count } = await supabase
     .from("order_details")
     .delete({ count: "exact" })

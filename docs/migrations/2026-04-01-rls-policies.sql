@@ -224,3 +224,46 @@ DROP POLICY IF EXISTS admin_delete ON orders;
 CREATE POLICY admin_delete ON orders
   FOR DELETE
   USING (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com');
+
+-- ============================================================
+-- Section 4: Order Details Table
+-- Policy rules:
+--   own_read              -- customer can SELECT details for their own orders, admin can SELECT all
+--   authenticated_insert  -- any authenticated user can INSERT
+--   admin_update          -- only admin can UPDATE
+--   admin_delete          -- only admin can DELETE
+-- ============================================================
+
+-- ------------------------------------------------------------
+-- order_details
+-- ------------------------------------------------------------
+ALTER TABLE order_details ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS own_read ON order_details;
+CREATE POLICY own_read ON order_details
+  FOR SELECT
+  USING (
+    order_id IN (
+      SELECT id FROM orders
+      WHERE customer_id IN (
+        SELECT id FROM customers WHERE email = auth.jwt() ->> 'email'
+      )
+    )
+    OR auth.jwt() ->> 'email' = 'ejumlauf@gmail.com'
+  );
+
+DROP POLICY IF EXISTS authenticated_insert ON order_details;
+CREATE POLICY authenticated_insert ON order_details
+  FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS admin_update ON order_details;
+CREATE POLICY admin_update ON order_details
+  FOR UPDATE
+  USING (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com');
+
+DROP POLICY IF EXISTS admin_delete ON order_details;
+CREATE POLICY admin_delete ON order_details
+  FOR DELETE
+  USING (auth.jwt() ->> 'email' = 'ejumlauf@gmail.com');

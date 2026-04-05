@@ -1,0 +1,95 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getOrderForConfirmation } from "@/lib/db/orders";
+import { getOrderItems } from "@/lib/db/order-items";
+import { getServiceSupabase } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
+
+function formatPrice(cents: number): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
+}
+
+export default async function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const orderId = Number(id);
+  if (isNaN(orderId)) notFound();
+
+  const order = await getOrderForConfirmation(orderId);
+  if (!order || (order.status !== "confirmed" && order.status !== "pending_payment")) {
+    notFound();
+  }
+
+  const items = await getOrderItems(orderId);
+
+  // Fetch plant names for display
+  const supabase = getServiceSupabase();
+  const plantIds = [...new Set(items.map((i) => i.plant_id))];
+  const { data: plants } = await supabase
+    .from("plants")
+    .select("id, cultivar_name")
+    .in("id", plantIds);
+
+  const plantMap = new Map((plants ?? []).map((p) => [p.id, p.cultivar_name]));
+
+  const itemsTotal = items.reduce((sum, i) => sum + i.price_each * i.quantity, 0);
+  const shippingCost = order.shipping_cost ?? 0;
+  const total = itemsTotal + shippingCost;
+
+  return (
+    <div className="max-w-lg mx-auto py-16 text-center">
+      <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
+      <p className="text-muted-foreground mb-8">
+        Thank you{order.guest_name ? `, ${order.guest_name}` : ""}. Your order #{order.id} has been placed.
+      </p>
+
+      <div className="rounded-lg border p-6 text-left space-y-4 mb-8">
+        <h2 className="font-semibold">Items</h2>
+        <div className="space-y-2">
+          {items.map((item) => (
+            <div key={item.id} className="flex justify-between text-sm">
+              <span>
+                {plantMap.get(item.plant_id) ?? "Unknown"} x{item.quantity}
+              </span>
+              <span>{formatPrice(item.price_each * item.quantity)}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t pt-2 space-y-1">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Subtotal</span>
+            <span>{formatPrice(itemsTotal)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Shipping</span>
+            <span>{formatPrice(shippingCost)}</span>
+          </div>
+          <div className="flex justify-between font-semibold">
+            <span>Total</span>
+            <span>{formatPrice(total)}</span>
+          </div>
+        </div>
+
+        {order.shipping_address_street && (
+          <div className="border-t pt-2">
+            <p className="text-sm text-muted-foreground mb-1">Shipping to:</p>
+            <p className="text-sm">
+              {order.shipping_address_street}<br />
+              {order.shipping_address_city}, {order.shipping_address_state} {order.shipping_address_zip}
+            </p>
+          </div>
+        )}
+
+        {order.guest_email && (
+          <p className="text-sm text-muted-foreground border-t pt-2">
+            A receipt has been sent to {order.guest_email}.
+          </p>
+        )}
+      </div>
+
+      <Button render={<Link href="/products" />} variant="outline">
+        Continue Shopping
+      </Button>
+    </div>
+  );
+}

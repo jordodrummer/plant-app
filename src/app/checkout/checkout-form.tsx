@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
-import { useRouter } from "next/navigation";
-import { useCart } from "@/lib/cart-context";
 import { Button } from "@/components/ui/button";
 
 function formatPrice(cents: number): string {
@@ -21,8 +19,6 @@ type CheckoutState = {
 export default function CheckoutForm({ checkoutState }: { checkoutState: CheckoutState }) {
   const stripe = useStripe();
   const elements = useElements();
-  const router = useRouter();
-  const { clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

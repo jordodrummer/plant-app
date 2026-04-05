@@ -53,12 +53,23 @@ export type Customer = {
   email: string;
 };
 
+export type OrderStatus = 'pending' | 'pending_payment' | 'confirmed' | 'shipped' | 'delivered' | 'deleted' | 'expired';
+
 export type Order = {
   id: number;
-  customer_id: number;
+  customer_id: number | null;
   created_on: Date;
   updated_on: Date;
-  status: string;
+  status: OrderStatus;
+  stripe_payment_intent_id: string | null;
+  shipping_cost: number | null;
+  expires_at: Date | null;
+  guest_email: string | null;
+  guest_name: string | null;
+  shipping_address_street: string | null;
+  shipping_address_city: string | null;
+  shipping_address_state: string | null;
+  shipping_address_zip: string | null;
 };
 
 export type OrderDetail = {

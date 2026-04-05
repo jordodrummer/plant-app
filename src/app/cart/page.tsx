@@ -18,7 +18,7 @@ export default function CartPage() {
       <div className="flex flex-col items-center gap-4 py-16">
         <h1 className="text-2xl font-bold">Your cart is empty</h1>
         <p className="text-muted-foreground">Add some plants to get started!</p>
-        <Button nativeButton={false} render={<Link href="/products" />} variant="outline">
+        <Button render={<Link href="/products" />} variant="outline">
           Browse Products
         </Button>
       </div>
@@ -83,9 +83,14 @@ export default function CartPage() {
 
       <div className="mt-4 flex items-center justify-between border-t pt-4">
         <span className="text-lg font-bold">Total: {formatPrice(totalPrice)}</span>
-        <Button nativeButton={false} render={<Link href="/products" />} variant="outline">
-          Continue Shopping
-        </Button>
+        <div className="flex gap-2">
+          <Button render={<Link href="/products" />} variant="outline">
+            Continue Shopping
+          </Button>
+          <Button render={<Link href="/checkout" />}>
+            Checkout
+          </Button>
+        </div>
       </div>
     </div>
   );

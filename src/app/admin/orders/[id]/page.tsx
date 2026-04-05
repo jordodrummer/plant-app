@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getSupabase } from "@/lib/supabase/server";
+import { getServiceSupabase } from "@/lib/supabase/server";
 import OrderStatusSelect from "./order-status-select";
 
 export default async function AdminOrderDetailPage({
@@ -9,7 +9,7 @@ export default async function AdminOrderDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
 
   const { data: order, error } = await supabase
     .from("orders")

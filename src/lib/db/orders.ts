@@ -1,8 +1,8 @@
-import { getSupabase } from "../supabase/server";
+import { getServiceSupabase } from "../supabase/server";
 import type { Order } from "../types";
 
 export async function getOrders(): Promise<Order[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("orders")
     .select("*");
@@ -12,7 +12,7 @@ export async function getOrders(): Promise<Order[]> {
 }
 
 export async function getOrderById(id: number): Promise<Order | null> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("orders")
     .select("*")
@@ -24,7 +24,7 @@ export async function getOrderById(id: number): Promise<Order | null> {
 }
 
 export async function createOrder(customerId: number): Promise<Order> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("orders")
     .insert({ customer_id: customerId })
@@ -36,7 +36,7 @@ export async function createOrder(customerId: number): Promise<Order> {
 }
 
 export async function updateOrderStatus(id: number, status: string): Promise<Order | null> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("orders")
     .update({ status, updated_on: new Date().toISOString() })
@@ -49,7 +49,7 @@ export async function updateOrderStatus(id: number, status: string): Promise<Ord
 }
 
 export async function deleteOrder(id: number): Promise<boolean> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("orders")
     .update({ status: "deleted", updated_on: new Date().toISOString() })

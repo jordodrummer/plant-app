@@ -1,8 +1,8 @@
-import { getSupabase } from "../supabase/server";
+import { getServiceSupabase } from "../supabase/server";
 import type { PlantVariant } from "../types";
 
 export async function getVariantsByPlantId(plantId: number): Promise<PlantVariant[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plant_variants")
     .select("*")
@@ -14,7 +14,7 @@ export async function getVariantsByPlantId(plantId: number): Promise<PlantVarian
 }
 
 export async function createVariant(variant: Omit<PlantVariant, "id">): Promise<PlantVariant> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plant_variants")
     .insert(variant)
@@ -40,7 +40,7 @@ export async function createVariant(variant: Omit<PlantVariant, "id">): Promise<
 }
 
 export async function updateVariantInventory(id: number, inventory: number): Promise<PlantVariant | null> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plant_variants")
     .update({ inventory })
@@ -67,7 +67,7 @@ export async function updateVariantInventory(id: number, inventory: number): Pro
   return data;
 }
 
-const VARIANT_ALLOWED_COLUMNS = new Set(["variant_type", "price", "inventory", "label", "note", "sort_order"]);
+const VARIANT_ALLOWED_COLUMNS = new Set(["variant_type", "price", "inventory", "label", "note", "sort_order", "weight_lbs", "weight_oz", "shipping_override"]);
 
 export async function updateVariant(
   id: number,
@@ -78,7 +78,7 @@ export async function updateVariant(
   );
   if (Object.keys(filtered).length === 0) return null;
 
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plant_variants")
     .update(filtered)
@@ -106,7 +106,7 @@ export async function updateVariant(
 }
 
 export async function deleteVariant(id: number): Promise<boolean> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
 
   // Get plant_id before deleting
   const { data: variant } = await supabase

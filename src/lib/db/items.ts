@@ -1,8 +1,8 @@
-import { getSupabase } from "../supabase/server";
+import { getServiceSupabase } from "../supabase/server";
 import type { Plant, PlantWithPricing } from "../types";
 
 export async function getItems(): Promise<PlantWithPricing[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data: plants, error } = await supabase
     .from("plants")
     .select(`
@@ -30,7 +30,7 @@ export async function getItems(): Promise<PlantWithPricing[]> {
 }
 
 export async function getFeaturedItems(limit: number = 3): Promise<PlantWithPricing[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data: plants, error } = await supabase
     .from("plants")
     .select(`
@@ -60,7 +60,7 @@ export async function getFeaturedItems(limit: number = 3): Promise<PlantWithPric
 }
 
 export async function getItemById(id: number): Promise<Plant | null> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plants")
     .select("*")
@@ -72,7 +72,7 @@ export async function getItemById(id: number): Promise<Plant | null> {
 }
 
 export async function createItem(item: Omit<Plant, "id">): Promise<Plant> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plants")
     .insert(item)
@@ -91,7 +91,7 @@ export async function updateItem(id: number, fields: Partial<Omit<Plant, "id">>)
   );
   if (Object.keys(filtered).length === 0) return getItemById(id);
 
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("plants")
     .update(filtered)
@@ -104,7 +104,7 @@ export async function updateItem(id: number, fields: Partial<Omit<Plant, "id">>)
 }
 
 export async function deleteItem(id: number): Promise<boolean> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { error, count } = await supabase
     .from("plants")
     .delete({ count: "exact" })

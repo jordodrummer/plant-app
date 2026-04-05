@@ -8,7 +8,7 @@ import type { Plant, PlantVariant, PlantImage, Category, VariantType } from "@/l
 
 const VARIANT_TYPES: VariantType[] = [
   "cutting", "rooted_cutting", "cut_to_order", "mother_stand",
-  "seedling", "op_seeds", "hybrid_seeds",
+  "seedling", "op_seeds", "hybrid_seeds", "special",
 ];
 
 type VariantRow = {
@@ -19,6 +19,9 @@ type VariantRow = {
   label: string;
   note: string;
   sort_order: number;
+  weight_lbs: string;
+  weight_oz: string;
+  shipping_override: string;
 };
 
 type Props = {
@@ -45,6 +48,9 @@ export default function ProductForm({ plant, variants, images, categories }: Pro
       label: v.label ?? "",
       note: v.note ?? "",
       sort_order: v.sort_order,
+      weight_lbs: (v.weight_lbs ?? 0).toString(),
+      weight_oz: (v.weight_oz ?? 0).toString(),
+      shipping_override: v.shipping_override != null ? (v.shipping_override / 100).toFixed(2) : "",
     })) ?? []
   );
   const [saving, setSaving] = useState(false);
@@ -60,6 +66,9 @@ export default function ProductForm({ plant, variants, images, categories }: Pro
         label: "",
         note: "",
         sort_order: variantRows.length,
+        weight_lbs: "0",
+        weight_oz: "0",
+        shipping_override: "",
       },
     ]);
   }
@@ -118,6 +127,9 @@ export default function ProductForm({ plant, variants, images, categories }: Pro
           label: row.label || null,
           note: row.note || null,
           sort_order: row.sort_order,
+          weight_lbs: parseInt(row.weight_lbs, 10) || 0,
+          weight_oz: parseInt(row.weight_oz, 10) || 0,
+          shipping_override: row.shipping_override ? Math.round(parseFloat(row.shipping_override) * 100) : null,
         };
 
         if (row.id) {
@@ -264,6 +276,38 @@ export default function ProductForm({ plant, variants, images, categories }: Pro
                 value={row.label}
                 onChange={(e) => updateVariantRow(i, "label", e.target.value)}
                 className="w-full rounded border bg-background px-2 py-1.5 text-sm"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Weight (lbs)</label>
+              <input
+                type="number"
+                min="0"
+                value={row.weight_lbs}
+                onChange={(e) => updateVariantRow(i, "weight_lbs", e.target.value)}
+                className="w-16 rounded border bg-background px-2 py-1.5 text-sm"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Weight (oz)</label>
+              <input
+                type="number"
+                min="0"
+                value={row.weight_oz}
+                onChange={(e) => updateVariantRow(i, "weight_oz", e.target.value)}
+                className="w-16 rounded border bg-background px-2 py-1.5 text-sm"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">Ship override ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={row.shipping_override}
+                onChange={(e) => updateVariantRow(i, "shipping_override", e.target.value)}
+                placeholder="Auto"
+                className="w-24 rounded border bg-background px-2 py-1.5 text-sm"
               />
             </div>
             <Button

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getSupabase } from "@/lib/supabase/server";
+import { getServiceSupabase } from "@/lib/supabase/server";
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
@@ -10,7 +10,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default async function AdminOrdersPage() {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data: orders, error } = await supabase
     .from("orders")
     .select(`

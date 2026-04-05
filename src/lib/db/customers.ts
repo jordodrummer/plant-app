@@ -1,8 +1,8 @@
-import { getSupabase } from "../supabase/server";
+import { getServiceSupabase } from "../supabase/server";
 import type { Customer, CustomerWithStats } from "../types";
 
 export async function getCustomers(): Promise<CustomerWithStats[]> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data: customers, error } = await supabase
     .from("customers")
     .select(`
@@ -43,7 +43,7 @@ export async function getCustomers(): Promise<CustomerWithStats[]> {
 }
 
 export async function getCustomerById(id: number): Promise<Customer | null> {
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from("customers")
     .select("*")

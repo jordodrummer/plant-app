@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getCustomerById } from "@/lib/db/customers";
-import { getSupabase } from "@/lib/supabase/server";
+import { getServiceSupabase } from "@/lib/supabase/server";
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
@@ -20,7 +20,7 @@ export default async function AdminCustomerDetailPage({
   const customer = await getCustomerById(Number(id));
   if (!customer) notFound();
 
-  const supabase = getSupabase();
+  const supabase = getServiceSupabase();
   const { data: orders } = await supabase
     .from("orders")
     .select(`

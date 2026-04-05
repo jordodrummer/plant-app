@@ -8,11 +8,21 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 if (!supabaseUrl) throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL");
 if (!supabaseKey) throw new Error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY");
 
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!supabaseServiceKey) throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY");
+
 // Singleton client for data queries (no auth context)
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export function getSupabase() {
   return supabase;
+}
+
+// Service role client for server-side DB operations (bypasses RLS)
+const serviceSupabase = createClient(supabaseUrl, supabaseServiceKey);
+
+export function getServiceSupabase() {
+  return serviceSupabase;
 }
 
 // Per-request client with cookie-based auth (for auth checks in server components and API routes)

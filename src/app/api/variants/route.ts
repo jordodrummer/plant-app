@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const body = await request.json();
-    const { plant_id, variant_type, price, inventory, label, note, sort_order } = body;
+    const { plant_id, variant_type, price, inventory, label, note, sort_order, weight_lbs, weight_oz, shipping_override } = body;
 
     if (!plant_id || !variant_type || price == null) {
       return NextResponse.json({ error: "plant_id, variant_type, and price are required" }, { status: 400 });
@@ -30,6 +30,9 @@ export async function POST(request: Request) {
       label: label ?? null,
       note: note ?? null,
       sort_order: sort_order ?? 0,
+      weight_lbs: weight_lbs ?? 0,
+      weight_oz: weight_oz ?? 0,
+      shipping_override: shipping_override ?? null,
     });
     return NextResponse.json(variant, { status: 201 });
   } catch (error) {

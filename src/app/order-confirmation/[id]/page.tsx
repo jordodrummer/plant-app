@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ClearCartOnMount from "./clear-cart";
 import { notFound } from "next/navigation";
 import { getOrderForConfirmation } from "@/lib/db/orders";
 import { getOrderItems } from "@/lib/db/order-items";
@@ -37,6 +38,7 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
 
   return (
     <div className="max-w-lg mx-auto py-16 text-center">
+      <ClearCartOnMount />
       <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
       <p className="text-muted-foreground mb-8">
         Thank you{order.guest_name ? `, ${order.guest_name}` : ""}. Your order #{order.id} has been placed.

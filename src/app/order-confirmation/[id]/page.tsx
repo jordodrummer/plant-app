@@ -72,15 +72,19 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
           </div>
         </div>
 
-        {order.shipping_address_street && (
-          <div className="border-t pt-2">
-            <p className="text-sm text-muted-foreground mb-1">Shipping to:</p>
-            <p className="text-sm">
-              {order.shipping_address_street}<br />
-              {order.shipping_address_city}, {order.shipping_address_state} {order.shipping_address_zip}
-            </p>
-          </div>
-        )}
+        <div className="border-t pt-2">
+          {order.shipping_address_street ? (
+            <>
+              <p className="text-sm text-muted-foreground mb-1">Shipping to:</p>
+              <p className="text-sm">
+                {order.shipping_address_street}<br />
+                {order.shipping_address_city}, {order.shipping_address_state} {order.shipping_address_zip}
+              </p>
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">Local pickup</p>
+          )}
+        </div>
 
         {order.guest_email && (
           <p className="text-sm text-muted-foreground border-t pt-2">

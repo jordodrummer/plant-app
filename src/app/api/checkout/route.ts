@@ -17,7 +17,8 @@ type CheckoutBody = {
   items: CheckoutItem[];
   guest_name: string;
   guest_email: string;
-  shipping_address: {
+  shipping_method?: "ship" | "pickup";
+  shipping_address?: {
     street: string;
     city: string;
     state: string;
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
   try {
     const body: CheckoutBody = await request.json();
     const { items, guest_name, guest_email, shipping_address } = body;
+    const isPickup = body.shipping_method === "pickup";
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
@@ -36,11 +38,13 @@ export async function POST(request: Request) {
     if (!guest_name || !guest_email) {
       return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
     }
-    if (!shipping_address?.street || !shipping_address?.city || !shipping_address?.state || !shipping_address?.zip) {
-      return NextResponse.json({ error: "Complete shipping address is required" }, { status: 400 });
-    }
-    if (!/^\d{5}$/.test(shipping_address.zip)) {
-      return NextResponse.json({ error: "Invalid ZIP code" }, { status: 400 });
+    if (!isPickup) {
+      if (!shipping_address?.street || !shipping_address?.city || !shipping_address?.state || !shipping_address?.zip) {
+        return NextResponse.json({ error: "Complete shipping address is required" }, { status: 400 });
+      }
+      if (!/^\d{5}$/.test(shipping_address.zip)) {
+        return NextResponse.json({ error: "Invalid ZIP code" }, { status: 400 });
+      }
     }
 
     // Fetch variant details for price verification and shipping calc
@@ -87,22 +91,30 @@ export async function POST(request: Request) {
       itemsTotal += variant.price * item.quantity;
     }
 
-    // Calculate shipping
-    const cartVariants = items.map((item) => {
-      const v = variantMap.get(item.variant_id)!;
-      return {
-        variant_id: v.id,
-        variant_type: v.variant_type,
-        quantity: item.quantity,
-        weight_lbs: v.weight_lbs ?? 0,
-        weight_oz: v.weight_oz ?? 0,
-        shipping_override: v.shipping_override,
-      };
-    });
+    // Calculate shipping (free for local pickup)
+    let shippingCost = 0;
+    let shippingBreakdown: { description: string; amount: number }[] = [];
 
-    const configs = await getShippingConfig();
-    const shippingResult = await calculateShipping(cartVariants, configs, shipping_address.zip);
-    const shippingCost = shippingResult.total;
+    if (isPickup) {
+      shippingBreakdown = [{ description: "Local pickup", amount: 0 }];
+    } else {
+      const cartVariants = items.map((item) => {
+        const v = variantMap.get(item.variant_id)!;
+        return {
+          variant_id: v.id,
+          variant_type: v.variant_type,
+          quantity: item.quantity,
+          weight_lbs: v.weight_lbs ?? 0,
+          weight_oz: v.weight_oz ?? 0,
+          shipping_override: v.shipping_override,
+        };
+      });
+
+      const configs = await getShippingConfig();
+      const shippingResult = await calculateShipping(cartVariants, configs, shipping_address!.zip);
+      shippingCost = shippingResult.total;
+      shippingBreakdown = shippingResult.breakdown;
+    }
 
     // Total in cents
     const totalAmount = itemsTotal + shippingCost;
@@ -127,10 +139,10 @@ export async function POST(request: Request) {
       stripe_payment_intent_id: paymentIntent.id,
       shipping_cost: shippingCost,
       expires_at: expiresAt,
-      shipping_address_street: shipping_address.street,
-      shipping_address_city: shipping_address.city,
-      shipping_address_state: shipping_address.state,
-      shipping_address_zip: shipping_address.zip,
+      shipping_address_street: shipping_address?.street ?? "",
+      shipping_address_city: shipping_address?.city ?? "",
+      shipping_address_state: shipping_address?.state ?? "",
+      shipping_address_zip: shipping_address?.zip ?? "",
     });
 
     // Create order items
@@ -145,7 +157,7 @@ export async function POST(request: Request) {
       items_total: itemsTotal,
       shipping_cost: shippingCost,
       total: totalAmount,
-      shipping_breakdown: shippingResult.breakdown,
+      shipping_breakdown: shippingBreakdown,
     });
   } catch (err) {
     console.error("Checkout error:", err);

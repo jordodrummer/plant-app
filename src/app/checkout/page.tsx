@@ -70,8 +70,11 @@ function AddressForm({
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
+  const [shippingMethod, setShippingMethod] = useState<"ship" | "pickup">("ship");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isPickup = shippingMethod === "pickup";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -90,7 +93,8 @@ function AddressForm({
           })),
           guest_name: name,
           guest_email: email,
-          shipping_address: { street, city, state, zip },
+          shipping_method: shippingMethod,
+          ...(isPickup ? {} : { shipping_address: { street, city, state, zip } }),
         }),
       });
 
@@ -121,24 +125,43 @@ function AddressForm({
         <label className="block text-sm font-medium mb-1">Email</label>
         <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Street Address</label>
-        <input type="text" required value={street} onChange={(e) => setStreet(e.target.value)} className={inputClass} />
-      </div>
-      <div className="grid grid-cols-3 gap-3">
-        <div>
-          <label className="block text-sm font-medium mb-1">City</label>
-          <input type="text" required value={city} onChange={(e) => setCity(e.target.value)} className={inputClass} />
+
+      <fieldset className="space-y-2">
+        <legend className="text-sm font-medium">Delivery Method</legend>
+        <div className="flex gap-4">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input type="radio" name="shipping_method" value="ship" checked={!isPickup} onChange={() => setShippingMethod("ship")} />
+            Ship to me
+          </label>
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input type="radio" name="shipping_method" value="pickup" checked={isPickup} onChange={() => setShippingMethod("pickup")} />
+            Local pickup
+          </label>
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">State</label>
-          <input type="text" required maxLength={2} value={state} onChange={(e) => setState(e.target.value.toUpperCase().slice(0, 2))} className={inputClass} placeholder="CA" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">ZIP</label>
-          <input type="text" required inputMode="numeric" maxLength={5} value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))} className={inputClass} />
-        </div>
-      </div>
+      </fieldset>
+
+      {!isPickup && (
+        <>
+          <div>
+            <label className="block text-sm font-medium mb-1">Street Address</label>
+            <input type="text" required value={street} onChange={(e) => setStreet(e.target.value)} className={inputClass} />
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-1">City</label>
+              <input type="text" required value={city} onChange={(e) => setCity(e.target.value)} className={inputClass} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">State</label>
+              <input type="text" required maxLength={2} value={state} onChange={(e) => setState(e.target.value.toUpperCase().slice(0, 2))} className={inputClass} placeholder="CA" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">ZIP</label>
+              <input type="text" required inputMode="numeric" maxLength={5} value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, "").slice(0, 5))} className={inputClass} />
+            </div>
+          </div>
+        </>
+      )}
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
